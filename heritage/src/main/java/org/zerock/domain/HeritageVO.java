@@ -1,7 +1,5 @@
 package org.zerock.domain;
 
-import java.util.Date;
-
 import lombok.Data;
 
 @Data
@@ -21,5 +19,6 @@ public class HeritageVO {
 	  private String figureType;
 	  private String center;
 	  private String coordinates;
-	  
+	  private String addresstype;
+
 }
