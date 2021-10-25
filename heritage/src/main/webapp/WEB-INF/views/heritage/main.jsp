@@ -36,13 +36,31 @@
                     height: 100%;
                     width: 100%;
                 }
+
+                ::-webkit-scrollbar {
+                width: 10px;
+                }
+                
+                ::-webkit-scrollbar-track {
+                background: rgba(255,255,255,0);
+                border-radius: 5px;;
+                }
+                
+                ::-webkit-scrollbar-thumb {
+                background: linear-gradient(#c2e59c, #64b3f4);
+                border-radius: 5px;
+                }
+
             </style>
             
         </head>
         <body class="is-preload">
 
+            <!-- alert 창 디자인 -->
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
             <!-- Header -->
-                <div id="header" style="width: 40%; float: left;">
+                <div id="header" style="width: 30%; float: left;">
     
                     <div class="top">
     
@@ -51,65 +69,70 @@
                                 <p>Cultural Heritage Detailed Address Service</p>
                             </div>
 
-                            <div id="search" style="margin: 20px;">
+                            <div id="search" style="margin: 0px 30px 0px 30px;"">
                                 <div class="input-group rounded">
                                     <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 서울 숭례문)" aria-label="Search"
-                                    aria-describedby="search-addon" onkeyup="enterSearch()"/>
-                                    <span class="input-group-text border-0" id="search-addon">
-                                      <i id="buttonSearch" class="fas fa-search"></i>
-                                    </span>
+                                    aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4;"/>
                                   </div>
                             </div>
-    
-                            <br>
-    
-                    </div>
-    
-                    <div class="bottom">
-    
-                        <!-- Social Icons -->
-                            <ul class="icons">
-                                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                                <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                                <li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-                                <li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-                                <li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-                            </ul>
+
+                            <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
+
+                            <div  style="margin: 20px;">
+                                <ul id="heritageList" class="list-group">
+                                </ul>
+                            </div>
     
                     </div>
-    
+  
                 </div>
     
             <!-- Main -->
-                <div id="main" style="height: 100%; width: 60%; float:right; margin:0">
+                <div id="main" style="height: 100%; width: 70%; float:right; margin:0;">
                 </div> 
 
                 <script type="text/javascript" type="text/javascript">
+                    $(document).ready(function(){
+
+                        $('#buttonSearch').click(function(){
+                        searchHeritage();
+                        });
+
+                        $('#heritageItem').click(function(){
+                            focusTo();
+                        });
+                    });
+
+
                 var polygon;
                 let enterSearch
                 (function($){
                     enterSearch = () => {
                         if(window.event.keyCode == 13){
-                        searchHeritage();
-                    }
+                            searchHeritage();
+                        }
                     }
                 })(jQuery)
 
                 function searchHeritage()
                 {
-                    //지도에 있는 도형 지우기
-                    if(polygon != null)
+                    //검색어를 입력하지 않았을 때
+                    if($('#searchWord').val().trim() == 0)
                     {
-                    polygon.setMap(null);
+                        Swal.fire('검색어를 입력하세요.');
+                        return
                     }
 
+                    $('#heritageList').children().remove();
+
+                    //검색결과 가져오기
                     $.ajax({
                         url: "load",
                         type: "GET",
                         data: {name: $('#searchWord').val().trim()},
                         dataType:"JSON",
                         success: function(data){
-                            focusTo(data);
+                            showHeritageList(data);
                         },
                         error: function(){
                             alert("error"); 
@@ -117,8 +140,31 @@
                     });
                 }
 
-                function focusTo(data)
+                //검색 결과 리스트 보여주기
+                function showHeritageList(data)
                 {
+                    var heritageList = $('#heritageList');
+
+                    for (i=0; i<data.length; i++)
+                    {
+                        heritageList.append("<li id=\"heritageItem\"class=\"list-group-item\" style=\" text-align:left;\">"
+                            + "<div><span style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
+                            + "</span><span style=\"color: black; font-size:0.8em\"> " + data[i]['HERITAGETYPE'] + "</span></div>"
+                            + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</li>");
+                    }                    
+                }
+
+                function focusTo()
+                {
+                    //지도에 있는 도형 지우기
+                    if(polygon != null)
+                    {
+                    polygon.setMap(null);
+                    }
+
+                    console.log("눌림"); 
+                    return;
+
                     var figureType = data[0]['FIGURETYPE'];
                     var center = data[0]['CENTER'];
                     var heritageCoordinate = String(data[0]['COORDINATES']);
@@ -193,13 +239,6 @@
                     var moveLatLon = new kakao.maps.LatLng(center.split(",")[1].trim(), center.split(",")[0].trim()) // 지도의 중심좌표
                     map.panTo(moveLatLon);
                 }
-
-                    $(document).ready(function(){
-
-                        $('#buttonSearch').click(function(){
-                            searchHeritage();
-                        });
-                    });
                     
                  </script> 
                 

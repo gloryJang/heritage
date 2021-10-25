@@ -5,6 +5,6 @@
 <mapper namespace="org.zerock.mapper.HeritageMapper">
 
 <select id="loadOneInfo" resultType="java.util.HashMap">
-  select * from heritage where heritageName = #{name}
+  select * from heritage where heritageName like '%'||#{name}||'%'
   </select>
 </mapper>
