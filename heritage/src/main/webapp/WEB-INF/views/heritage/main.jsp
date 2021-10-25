@@ -64,24 +64,26 @@
     
                     <div class="top">
     
-                            <div id="logo">
-                                <h1 id="title"">문화재 상세주소 서비스</h1>
-                                <p>Cultural Heritage Detailed Address Service</p>
-                            </div>
+                        <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
 
-                            <div id="search" style="margin: 0px 30px 0px 30px;"">
-                                <div class="input-group rounded">
-                                    <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 서울 숭례문)" aria-label="Search"
-                                    aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4;"/>
-                                  </div>
-                            </div>
+                        <div id="logo">
+                            <h1 id="title"">문화재 상세주소 서비스</h1>
+                            <p>Cultural Heritage Detailed Address Service</p>
+                        </div>
 
-                            <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
+                        <div id="search" style="margin: 0px 30px 0px 30px;"">
+                            <div class="input-group rounded">
+                                <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 서울 숭례문)" aria-label="Search"
+                                aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4;"/>
+                                </div>
+                        </div>
 
-                            <div  style="margin: 20px;">
-                                <ul id="heritageList" class="list-group">
-                                </ul>
-                            </div>
+                        <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
+
+                        <div  style="margin: 20px;">
+                            <ul id="heritageList" class="list-group">
+                            </ul>
+                        </div>
     
                     </div>
   
