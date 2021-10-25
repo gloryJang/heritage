@@ -147,7 +147,7 @@
 
                     for (i=0; i<data.length; i++)
                     {
-                        heritageList.append("<li id=\"heritageItem\"class=\"list-group-item\" style=\" text-align:left;\">"
+                        heritageList.append("<li id=\"heritageItem\"class=\"list-group-item list-group-item-action\" style=\" text-align:left;\">"
                             + "<div><span style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
                             + "</span><span style=\"color: black; font-size:0.8em\"> " + data[i]['HERITAGETYPE'] + "</span></div>"
                             + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</li>");
