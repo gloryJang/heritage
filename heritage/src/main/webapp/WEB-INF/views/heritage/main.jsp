@@ -64,7 +64,7 @@
     
                     <div class="top">
     
-                        <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
+                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
 
                         <div id="logo">
                             <h1 id="title"">문화재 상세주소 서비스</h1>
@@ -78,7 +78,7 @@
                                 </div>
                         </div>
 
-                        <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
+                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
 
                         <div  style="margin: 20px;">
                             <ul id="heritageList" class="list-group">
@@ -101,7 +101,10 @@
                         });
 
                         $('#heritageList').on('click', '.list-group-item', function(e) {
-                            focusTo();
+                            var selectedData = $('input[type=hidden]').attr("value");
+                            console.log(selectedData);
+                            
+                            focusTo(JSON.parse(selectedData));
                         });
                     });
 
@@ -151,12 +154,14 @@
                     {
                         heritageList.append("<li id=\"heritageItem\" class=\"list-group-item list-group-item-action\" style=\" text-align:left;\">"
                             + "<div><span style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
-                            + "</span><span style=\"color: black; font-size:0.8em\"> " + data[i]['HERITAGETYPE'] + "</span></div>"
-                            + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</li>");
+                            + "</span><span style=\"color: black; font-size:0.8em\">  " + data[i]['HERITAGETYPE'] + "</span></div>"
+                            + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</span></div>"
+                            + "<input id=\"heritageData\" type=\"hidden\" value=\"" + JSON.stringify(data[i]) + "\"/></li>"
+                        );                    
                     }                    
                 }
 
-                function focusTo()
+                function focusTo(selectedData)
                 {
                     //지도에 있는 도형 지우기
                     if(polygon != null)
@@ -164,12 +169,9 @@
                     polygon.setMap(null);
                     }
 
-                    console.log("눌림"); 
-                    return;
-
-                    var figureType = data[0]['FIGURETYPE'];
-                    var center = data[0]['CENTER'];
-                    var heritageCoordinate = String(data[0]['COORDINATES']);
+                    var figureType = selectedData['FIGURETYPE'];
+                    var center = selectedData['CENTER'];
+                    var heritageCoordinate = String(selectedData['COORDINATES']);
                     var coordinateGroup;
 
                     //멀티폴리곤일 경우
