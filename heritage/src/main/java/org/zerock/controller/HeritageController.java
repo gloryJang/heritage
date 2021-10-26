@@ -32,14 +32,14 @@ public class HeritageController {
 	return "/heritage/main";
 	}
 
-	@GetMapping("/load")
-	public ResponseEntity<List<HashMap<String, String>>> load(@RequestParam("name") String name)
+	@GetMapping("/loadList")
+	public ResponseEntity<List<HashMap<String, String>>> loadList(@RequestParam("name") String name)
 	{
 		log.info("ï¿½ï¿½È­ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½Ô·ï¿½ : " + name);
 
 		ResponseEntity<List<HashMap<String, String>>> entity = null;
 	    try{
-	        entity = new ResponseEntity<>(service.loadOneInfo(name), HttpStatus.OK);
+	        entity = new ResponseEntity<>(service.loadList(name), HttpStatus.OK);
 	    } catch(Exception e){
 	        e.printStackTrace();
 	        entity = new ResponseEntity<>( HttpStatus.BAD_REQUEST );
@@ -47,4 +47,21 @@ public class HeritageController {
 
 	    return entity;
 	}
+	
+	@GetMapping("/loadOneHeritage")
+	public ResponseEntity<List<HashMap<String, String>>> loadHeitage(@RequestParam("name") String name)
+	{
+		log.info("ÇÏ³ªÀÇ ¹®È­Àç Á¤º¸ ºÒ·¯¿À±â : " + name);
+
+		ResponseEntity<List<HashMap<String, String>>> entity = null;
+	    try{
+	        entity = new ResponseEntity<>(service.loadOneHeritage(name), HttpStatus.OK);
+	    } catch(Exception e){
+	        e.printStackTrace();
+	        entity = new ResponseEntity<>( HttpStatus.BAD_REQUEST );
+	    }
+
+	    return entity;
+	}
+	
 }

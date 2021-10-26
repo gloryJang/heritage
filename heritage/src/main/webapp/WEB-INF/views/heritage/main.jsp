@@ -64,7 +64,7 @@
     
                     <div class="top">
     
-                        <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
+                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
 
                         <div id="logo">
                             <h1 id="title"">문화재 상세주소 서비스</h1>
@@ -78,7 +78,7 @@
                                 </div>
                         </div>
 
-                        <hr style="color: #6bc010; height:1px; margin: 20px 30px 0px 30px;">
+                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
 
                         <div  style="margin: 20px;">
                             <ul id="heritageList" class="list-group">
@@ -101,7 +101,9 @@
                         });
 
                         $('#heritageList').on('click', '.list-group-item', function(e) {
-                            focusTo();
+                            var selectedData = $('#heritageName').text();
+                            
+                            heritageOnMap(selectedData);
                         });
                     });
 
@@ -129,7 +131,7 @@
 
                     //검색결과 가져오기
                     $.ajax({
-                        url: "load",
+                        url: "loadList",
                         type: "GET",
                         data: {name: $('#searchWord').val().trim()},
                         dataType:"JSON",
@@ -150,22 +152,37 @@
                     for (i=0; i<data.length; i++)
                     {
                         heritageList.append("<li id=\"heritageItem\" class=\"list-group-item list-group-item-action\" style=\" text-align:left;\">"
-                            + "<div><span style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
-                            + "</span><span style=\"color: black; font-size:0.8em\"> " + data[i]['HERITAGETYPE'] + "</span></div>"
-                            + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</li>");
-                    }                    
+                            + "<div><span id=\"heritageName\" style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
+                            + "</span><span style=\"color: black; font-size:0.8em\">  " + data[i]['HERITAGETYPE'] + "</span></div>"
+                            + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</span></div></li>"
+                        );                    
+                    }                      
                 }
 
-                function focusTo()
+                function heritageOnMap(selectedData)
+                {
+                    //하나의 결과 가져오기
+                    $.ajax({
+                        url: "loadOneHeritage",
+                        type: "GET",
+                        data: {name: selectedData},
+                        dataType:"JSON",
+                        success: function(data){
+                            focusTo(JSON.parse(selectedData));
+                        },
+                        error: function(){
+                            alert("error"); 
+                        }
+                    });
+                }
+
+                function focusTo(data)
                 {
                     //지도에 있는 도형 지우기
                     if(polygon != null)
                     {
                     polygon.setMap(null);
                     }
-
-                    console.log("눌림"); 
-                    return;
 
                     var figureType = data[0]['FIGURETYPE'];
                     var center = data[0]['CENTER'];
@@ -179,41 +196,75 @@
                         heritageCoordinate = heritageCoordinate.substr(1, heritageCoordinate.length-1).trim();
                         //] 삭제
                         heritageCoordinate = heritageCoordinate.substr(0, heritageCoordinate.length-1).trim();
+
+                        var groupPolygon = heritageCoordinate.split("[ [ [");
+
+                        for(i=1; i<groupPolygon.length; i++)
+                        {
+                            groupPolygon[i] = "[ [ [" + groupPolygon[i];
+                            dividePolygon(groupPolygon[i]);
+                        }
                     }
-                    
-                    var group = heritageCoordinate.split("[ [ ");
-                        coordinateGroup = new Array(group.length);
-
-                        for(i = 1; i < group.length; i++)
-                        {
-                        group[i] = group[i].split(" ] ]")[0] + " ]";
-
-                        var groups = group[i].split("[");
-                        coordinateGroup[i] = new Array(groups.length);
-
-                        for(j = 1; j < groups.length; j++)
-                        {
-                            coordinateGroup[i][j] = groups[j].split("]")[0].trim();
-                        }
-                        }
-
-                    //다각형 그리기
-                    for(i=1; i<coordinateGroup.length; i++)
+                    //폴리곤일 경우
+                    else
                     {
-                        drawPolygon(coordinateGroup, i);
+                        dividePolygon(heritageCoordinate);
                     }
 
                     //화면 이동하기
                     moveTo(center);
                 }
 
-                function drawPolygon(coordinateGroup, i)
+                //일반폴리곤과 구멍있는폴리곤 나누기
+                function dividePolygon(whichPolygon)
+                {
+                    //일반폴리곤이라면...
+                    if(whichPolygon.split("[ [").length == 2)
+                    {
+                        whichPolygon.substr(4, whichPolygon.length-4).trim();
+                        whichPolygon.substr(0, whichPolygon.length-4).trim();
+                        //좌표로만 되어 있는 상태
+                        
+                        var normalPolygon = whichPolygon.split("[");
+                        for (i = 1; i < normalPolygon.length; i++)
+                        {
+                            normalPolygon[i] = normalPolygon[i].substr(0,normalPolygon[i].length-1).trim();
+                        }
+                        drawNormalPolygon(normalPolygon);                    
+                    }
+                    //구멍있는폴리곤이라면
+                    else if (whichPolygon.split("[ [").length == 3)
+                    {
+                        var holePolygon = whichPolygon.split("[ [ ");
+
+                        for (i = 1; i < holePolygon.length; i++)
+                        {
+                            holePolygon[i] = "[" + holePolygon[i].split(" ] ]")[0] + "]";
+                        }
+
+                        var backGroup = holePolygon[1].split("[");
+                        var holeGroup = holePolygon[2].split("[");
+
+                        for(i=1; i<backGroup.length; i++)
+                        {
+                            backGroup[i] = backGroup[i].substr(0,[i].length-1).trim();
+                        }
+                        for(i=1; i<holeGroup.length; i++)
+                        {
+                            holeGroup[i] = holeGroup[i].substr(0,[i].length-1).trim();
+                        }
+
+                        drawHolePolygon(backGroup, holeGroup);
+                    }
+                 }
+
+                function drawNormalPolygon(normalPolygon)
                 {
                     var polygonPath = [];
 
-                        for(j=1; j < coordinateGroup[i].length; j++)
+                        for(i=1; i < normalPolygon.length; j++)
                         {
-                            polygonPath.push(new kakao.maps.LatLng(coordinateGroup[i][j].split(",")[1].trim(), coordinateGroup[i][j].split(",")[0].trim()));
+                            polygonPath.push(new kakao.maps.LatLng(normalPolygon[i].split(",")[1].trim(), normalPolygon[i].split(",")[0].trim()));
                         }
                                             
                     // 지도에 표시할 다각형을 생성합니다
@@ -227,6 +278,36 @@
                         fillOpacity: 0.7 // 채우기 불투명도 입니다
                     });
                     
+                    // 지도에 다각형을 표시합니다
+                    polygon.setMap(map);
+                }
+
+                function drawHolePolygon(backGroup, holeGroup)
+                {
+                    var path = [];
+                    var hole = []
+
+                    for(i=1; i < backGroup.length; j++)
+                    {
+                        path.push(new kakao.maps.LatLng(backGroup[i].split(",")[1].trim(), backGroup[i].split(",")[0].trim()));
+                    }
+
+                    for(i=1; i < holeGroup.length; j++)
+                    {
+                        hole.push(new kakao.maps.LatLng(holeGroup[i].split(",")[1].trim(), holeGroup[i].split(",")[0].trim()));
+                    }
+                                        
+                    // 지도에 표시할 다각형을 생성합니다
+                    polygon = new kakao.maps.Polygon({
+                    path: [path, hole], // 그려질 다각형의 좌표 배열입니다
+                    strokeWeight: 3, // 선의 두께입니다
+                    strokeColor: '#cf1717', // 선의 색깔입니다
+                    strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+                    strokeStyle: 'longdash', // 선의 스타일입니다
+                    fillColor: '#f0c6c5', // 채우기 색깔입니다
+                    fillOpacity: 0.7 // 채우기 불투명도 입니다
+                    });
+
                     // 지도에 다각형을 표시합니다
                     polygon.setMap(map);
                 }

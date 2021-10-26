@@ -23,13 +23,24 @@ public class HeritageServiceImpl implements HeritageService {
 	private HeritageMapper mapper;
 
 	@Override
-	public List<HashMap<String, String>> loadOneInfo(String name) {
+	public List<HashMap<String, String>> loadList(String name) {
 
 		log.info("��ȭ�� �� ���� �������� : " + name);
 
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("name", name);
 
-		return mapper.loadOneInfo(name);
+		return mapper.loadList(name);
 	}
+
+	@Override
+	public List<HashMap<String, String>> loadOneHeritage(String name) {
+
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("name", name);
+
+		return mapper.loadOneHeritage(name);
+	}
+	
+	
 }
