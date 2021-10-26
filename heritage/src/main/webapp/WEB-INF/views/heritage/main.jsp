@@ -101,12 +101,10 @@
                         });
 
                         $('#heritageList').on('click', '.list-group-item', function(e) {
-                            var selectedData = $('#heritageName').text();
-                            
-                            heritageOnMap(selectedData);
+                            var selectedItem = $(this).text().split('   ')[0];
+                            heritageOnMap(selectedItem);
                         });
                     });
-
 
                 var polygon;
                 let enterSearch
@@ -153,23 +151,23 @@
                     {
                         heritageList.append("<li id=\"heritageItem\" class=\"list-group-item list-group-item-action\" style=\" text-align:left;\">"
                             + "<div><span id=\"heritageName\" style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
-                            + "</span><span style=\"color: black; font-size:0.8em\">  " + data[i]['HERITAGETYPE'] + "</span></div>"
+                            + "</span><span style=\"color: black; font-size:0.8em\">   " + data[i]['HERITAGETYPE'] + "</span></div>"
                             + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</span></div></li>"
                         );                    
                     }                      
 
                 }
 
-                function heritageOnMap(selectedData)
+                function heritageOnMap(selectedItem)
                 {
                     //하나의 결과 가져오기
                     $.ajax({
                         url: "loadOneHeritage",
                         type: "GET",
-                        data: {name: selectedData},
+                        data: {name: selectedItem},
                         dataType:"JSON",
                         success: function(data){
-                            focusTo(JSON.parse(selectedData));
+                            focusTo(data);
                         },
                         error: function(){
                             alert("error"); 
