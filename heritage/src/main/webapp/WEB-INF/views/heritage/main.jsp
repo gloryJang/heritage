@@ -101,9 +101,16 @@
                         });
 
                         $('#heritageList').on('click', '.list-group-item', function(e) {
+<<<<<<< HEAD
                             var selectedData = $('#heritageName').text();
                             
                             heritageOnMap(selectedData);
+=======
+                            var selectedData = $('input[type=hidden]').attr("value");
+                            console.log(selectedData);
+                            
+                            focusTo(JSON.parse(selectedData));
+>>>>>>> refs/remotes/origin/main
                         });
                     });
 
@@ -152,13 +159,23 @@
                     for (i=0; i<data.length; i++)
                     {
                         heritageList.append("<li id=\"heritageItem\" class=\"list-group-item list-group-item-action\" style=\" text-align:left;\">"
+<<<<<<< HEAD
                             + "<div><span id=\"heritageName\" style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
                             + "</span><span style=\"color: black; font-size:0.8em\">  " + data[i]['HERITAGETYPE'] + "</span></div>"
                             + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</span></div></li>"
                         );                    
                     }                      
+=======
+                            + "<div><span style=\"color: #1679ca; font-size: 1.1em; font-weight:bold;\">" + data[i]['HERITAGENAME']
+                            + "</span><span style=\"color: black; font-size:0.8em\">  " + data[i]['HERITAGETYPE'] + "</span></div>"
+                            + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</span></div>"
+                            + "<input id=\"heritageData\" type=\"hidden\" value=\"" + JSON.stringify(data[i]) + "\"/></li>"
+                        );                    
+                    }                    
+>>>>>>> refs/remotes/origin/main
                 }
 
+<<<<<<< HEAD
                 function heritageOnMap(selectedData)
                 {
                     //하나의 결과 가져오기
@@ -177,6 +194,9 @@
                 }
 
                 function focusTo(data)
+=======
+                function focusTo(selectedData)
+>>>>>>> refs/remotes/origin/main
                 {
                     //지도에 있는 도형 지우기
                     if(polygon != null)
@@ -184,9 +204,15 @@
                     polygon.setMap(null);
                     }
 
+<<<<<<< HEAD
                     var figureType = data[0]['FIGURETYPE'];
                     var center = data[0]['CENTER'];
                     var heritageCoordinate = String(data[0]['COORDINATES']);
+=======
+                    var figureType = selectedData['FIGURETYPE'];
+                    var center = selectedData['CENTER'];
+                    var heritageCoordinate = String(selectedData['COORDINATES']);
+>>>>>>> refs/remotes/origin/main
                     var coordinateGroup;
 
                     //멀티폴리곤일 경우
