@@ -210,6 +210,9 @@
                     }
                     }
 
+                    //마커 만들기
+                    makemarkers(data);
+
                     var figureType = data[0]['FIGURETYPE'];
                     var center = data[0]['CENTER'];
                     var heritageCoordinate = String(data[0]['COORDINATES']);
