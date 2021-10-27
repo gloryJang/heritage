@@ -106,15 +106,17 @@
                         });
                     });
 
-                var polygons = [];
-                let enterSearch
-                (function($){
-                    enterSearch = () => {
-                        if(window.event.keyCode == 13){
-                            searchHeritage();
+                    var polygons = [];
+                    var markers = [];
+
+                    let enterSearch
+                    (function($){
+                        enterSearch = () => {
+                            if(window.event.keyCode == 13){
+                                searchHeritage();
+                            }
                         }
-                    }
-                })(jQuery)
+                    })(jQuery)
 
                 function searchHeritage()
                 {
@@ -135,11 +137,22 @@
                         dataType:"JSON",
                         success: function(data){
                             showHeritageList(data);
+                            makemarkers(data);
                         },
                         error: function(){
                             alert("error"); 
                         }
                     });
+                }
+                
+                function makemarkers(data)
+                {
+                    for(var i=0; i<data.length; i++)
+                    {
+                        var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
+                        markers.push(new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim()));
+                        markers[markers.length-1].setMap(map)
+                    }
                 }
 
                 //검색 결과 리스트 보여주기
@@ -183,6 +196,14 @@
                     for(var i=0; i<polygons.length; i++)
                     {
                         polygons[i].setMap(null);
+                    }
+                    }
+                    //지도에 있는 마커 지우기
+                    if(markers != null)
+                    {
+                    for(var i=0; i<markers.length; i++)
+                    {
+                        markers[i].setMap(null);
                     }
                     }
 
