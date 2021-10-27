@@ -150,7 +150,10 @@
                     for(var i=0; i<data.length; i++)
                     {
                         var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
-                        markers.push(new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim()));
+                        var markerPosition = new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim());
+                        markers.push(new kakao.maps.Marker({
+                            position: markerPosition
+                        }))
                         markers[markers.length-1].setMap(map)
                     }
                 }
