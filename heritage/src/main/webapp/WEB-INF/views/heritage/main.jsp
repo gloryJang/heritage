@@ -51,6 +51,12 @@
                 border-radius: 5px;
                 }
 
+                .overlay_info div, :after, :before {
+                 -webkit-box-sizing: unset;
+                 box-sizing: unset;
+                 border: unset;
+                }
+
                 .overlay_info {border-radius: 6px; margin-bottom: 12px; float:left;position: relative; border: 1px solid #fff; border-bottom: 2px solid #fff;background-color:#fff; -webkit-box-sizing: unset; box-sizing: unset;}
                 .overlay_info:nth-of-type(n) {border:0; box-shadow: 0px 1px 2px #888;}
                 .overlay_info a {display: block; background: #64b3f4; background: #64b3f4 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center; text-decoration: none; color: #fff; padding:12px 36px 12px 14px; font-size: 10px; border-radius: 6px 6px 0 0}
