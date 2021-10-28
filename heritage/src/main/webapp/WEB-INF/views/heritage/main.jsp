@@ -51,6 +51,15 @@
                 border-radius: 5px;
                 }
 
+                .overlay_info {border-radius: 6px; margin-bottom: 12px; float:left;position: relative; border: 1px solid #fff; border-bottom: 2px solid #fff;background-color:#fff; -webkit-box-sizing: unset; box-sizing: unset;}
+                .overlay_info:nth-of-type(n) {border:0; box-shadow: 0px 1px 2px #888;}
+                .overlay_info a {display: block; background: #64b3f4; background: #64b3f4 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center; text-decoration: none; color: #fff; padding:12px 36px 12px 14px; font-size: 10px; border-radius: 6px 6px 0 0}
+                .overlay_info a strong {color: #fff; padding-left: 5px; font-size: 14px; font-weight: 200;}
+                .overlay_info .desc {padding:14px;position: relative; min-width: 190px; height: 56px}
+                .overlay_info img {vertical-align: top;}
+                .overlay_info .address {font-size: 12px; color: #333; position: absolute; left: 80px; right: 14px; top: 24px; white-space: normal}
+                .overlay_info:after {content:'';position: absolute; margin-left: -11px; left: 50%; bottom: -12px; width: 22px; height: 12px; background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png) no-repeat 0 bottom;}
+</style>
             </style>
             
         </head>
@@ -93,6 +102,35 @@
                 <div id="main" style="height: 100%; width: 70%; float:right; margin:0;">
                 </div> 
 
+                <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6c83b812ba7b8d29c856df5598527c46"></script>
+                <script>
+                var mapContainer = document.getElementById('main'), // 지도를 표시할 div 
+                    mapOption = { 
+                        center: new kakao.maps.LatLng(37.579512, 126.977019), // 지도의 중심좌표
+                        level: 3 // 지도의 확대 레벨
+                    };  
+                
+                var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+                /*
+                // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+                var mapTypeControl = new kakao.maps.MapTypeControl();
+                // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+                map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+                */
+
+                // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+                var zoomControl = new kakao.maps.ZoomControl();
+                map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+                // 지도가 확대 또는 축소되면 마지막 파라미터로 넘어온 함수를 호출하도록 이벤트를 등록합니다
+                kakao.maps.event.addListener(map, 'zoom_changed', function() {        
+                    
+                    // 지도의 현재 레벨을 얻어옵니다
+                    var level = map.getLevel();                    
+                });               
+                </script>
+
                 <script type="text/javascript" type="text/javascript">
                     $(document).ready(function(){
 
@@ -108,6 +146,9 @@
 
                     var polygons = [];
                     var markers = [];
+
+                    //마커 정보 창
+                    var infoWindows = [];
 
                     let enterSearch
                     (function($){
@@ -147,18 +188,67 @@
                 
                 function makemarkers(data)
                 {
+                    var positions = [];
+
+                    // 마커 이미지의 이미지 주소입니다
+                    var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
+
+                    // 마커 이미지의 이미지 크기 입니다
+                    var imageSize = new kakao.maps.Size(24, 35); 
+
+                    // 마커 이미지를 생성합니다    
+                    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
+
                     for(var i=0; i<data.length; i++)
                     {
                         var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
 
+                        positions.push(
+                            {
+                                content: '<div class="overlay_info">' +
+                                            '    <a href="https://www.heritage.go.kr/heri/cul/culSelectDetail.do?VdkVgwKey='
+                                            +    data[i]['HERITAGECODE'].substr(0,2) + ',' + data[i]['HERITAGECODE'].substr(2,8) + ',' + data[i]['HERITAGECODE'].substr(10,2)
+                                            +    '&pageNo__=5_1_1_0&pageNo=1_1_2_0" target="_blank">'
+                                            +    data[i]['ITEMNAME'] + '<strong>'
+                                            +    data[i]['HERITAGENAME'] + '</strong></a>' +
+                                            '    <div class="desc">' +
+                                            '        <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/place_thumb.png" alt="">' +
+                                            '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                                            '</div>',
+                                latlng : new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim())
+                            }
+                        );
+                        
+                        // 마커를 생성합니다
                         markers.push(new kakao.maps.Marker({
-                            map:map,
-                            position: new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim())
-                        }))
+                            map: map, // 마커를 표시할 지도
+                            position: positions[i].latlng, // 마커를 표시할 위치
+                            title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                            image : markerImage // 마커 이미지 
+                        }));
 
-                        markers[markers.length-1].setMap(map)
+                        // 마커에 표시할 인포윈도우를 생성합니다 
+                        infoWindows.push(new kakao.maps.InfoWindow({
+                            content: positions[i].content // 인포윈도우에 표시할 내용
+                        }));
+
+                        kakao.maps.event.addListener(markers[i], 'click', makeClickListener(map, markers[i], infoWindows[i]));
                     }
                 }
+
+                // 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
+                function makeClickListener(map, marker, infowindow) {
+                    return function() {
+                        infowindow.open(map, marker);
+                    };
+                }
+                
+                /*
+                // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다 
+                function closeOverlay() {
+                overlay.setMap(null);     
+                }
+                */
 
                 //검색 결과 리스트 보여주기
                 function showHeritageList(data)
@@ -173,7 +263,6 @@
                             + "<div><span style=\"color: darkgray; font-size:0.8em\">" + data[i]['ADDRESS'] + "</span></div></li>"
                         );                    
                     }                      
-
                 }
 
                 function heritageOnMap(selectedItem)
@@ -354,79 +443,9 @@
                     var moveLatLon = new kakao.maps.LatLng(center.split(",")[1].trim(), center.split(",")[0].trim()) // 지도의 중심좌표
                     map.panTo(moveLatLon);
                 }
-
-                //마커 클릭 시 윈도우 표시
-                // 커스텀 오버레이에 표시할 컨텐츠 입니다
-                // 커스텀 오버레이는 아래와 같이 사용자가 자유롭게 컨텐츠를 구성하고 이벤트를 제어할 수 있기 때문에
-                // 별도의 이벤트 메소드를 제공하지 않습니다 
-                var content = '<div class="wrap">' + 
-                            '    <div class="info">' + 
-                            '        <div class="title">' + 
-                            '            카카오 스페이스닷원' + 
-                            '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' + 
-                            '        </div>' + 
-                            '        <div class="body">' + 
-                            '            <div class="img">' +
-                            '                <img src="https://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
-                            '           </div>' + 
-                            '            <div class="desc">' + 
-                            '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' + 
-                            '                <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>' + 
-                            '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="link">홈페이지</a></div>' + 
-                            '            </div>' + 
-                            '        </div>' + 
-                            '    </div>' +    
-                            '</div>';
-
-                // 마커 위에 커스텀오버레이를 표시합니다
-                // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
-                var overlay = new kakao.maps.CustomOverlay({
-                    content: content,
-                    map: map,
-                    position: marker.getPosition()       
-                });
-
-                // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
-                kakao.maps.event.addListener(marker, 'click', function() {
-                    overlay.setMap(map);
-                });
-
-                // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다 
-                function closeOverlay() {
-                    overlay.setMap(null);     
-                }
                     
                  </script> 
                 
-                <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6c83b812ba7b8d29c856df5598527c46"></script>
-                <script>
-                var mapContainer = document.getElementById('main'), // 지도를 표시할 div 
-                    mapOption = { 
-                        center: new kakao.maps.LatLng(37.579512, 126.977019), // 지도의 중심좌표
-                        level: 3 // 지도의 확대 레벨
-                    };  
-                
-                var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
-                /*
-                // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
-                var mapTypeControl = new kakao.maps.MapTypeControl();
-                // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
-                map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
-                */
-
-                // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
-                var zoomControl = new kakao.maps.ZoomControl();
-                map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-
-                // 지도가 확대 또는 축소되면 마지막 파라미터로 넘어온 함수를 호출하도록 이벤트를 등록합니다
-                kakao.maps.event.addListener(map, 'zoom_changed', function() {        
-                    
-                    // 지도의 현재 레벨을 얻어옵니다
-                    var level = map.getLevel();                    
-                });               
-                </script>
-
                 <script src="/resources/assets/js/jquery.min.js"></script>
                 <script src="/resources/assets/js/jquery.scrolly.min.js"></script>
                 <script src="/resources/assets/js/jquery.scrollex.min.js"></script>
