@@ -133,7 +133,13 @@
                         
                         // 지도의 현재 레벨을 얻어옵니다
                         var level = map.getLevel();                    
-                    });               
+                    });             
+                    
+                    //바운드를 위한 포인트
+                    var points = [];
+
+                    // 지도를 재설정할 범위정보를 가지고 있을 LatLngBounds 객체를 생성합니다
+                    var bounds;   
                 </script>
 
                 <script type="text/javascript">
@@ -147,33 +153,53 @@
                         });
                     });
 
+                    function setBounds(){
+                        for(var i = 0; i < points.length; i++)
+                        {
+                            bounds.extend(points[i]);
+                        }
+
+                        // LatLngBounds 객체에 추가된 좌표들을 기준으로 지도의 범위를 재설정합니다
+                        // 이때 지도의 중심좌표와 레벨이 변경될 수 있습니다
+                        map.setBounds(bounds);
+                    }
+
                     function refreshSymbol()
                     {
-                            //지도에 있는 도형 지우기
-                            if(polygons != null)
+                        //지도에 있는 도형 지우기
+                        if(polygons != null)
+                        {
+                            for(var i=0; i<polygons.length; i++)
                             {
-                                for(var i=0; i<polygons.length; i++)
-                                {
-                                    polygons[i].setMap(null);
-                                }
-                                polygons = [];
+                                polygons[i].setMap(null);
                             }
+                            polygons = [];
+                        }
 
-                            //마커 지우기
-                            if(markers != null)
+                        //마커 지우기
+                        if(markers != null)
+                        {
+                            for(var i=0; i<markers.length; i++)
                             {
-                                for(var i=0; i<markers.length; i++)
-                                {
-                                    markers[i].setMap(null);
-                                }
-                                markers = [];
+                                markers[i].setMap(null);
                             }
+                            markers = [];
+                        }
 
-                            //정보창 지우기
-                            if(infoWindows != null)
-                            {
-                                infoWindows = [];
-                            }
+                        //정보창 지우기
+                        if(infoWindows != null)
+                        {
+                            infoWindows = [];
+                        }
+
+                        //포인트 초기화
+                        if(points != null)
+                        {
+                            points = [];
+                        }
+
+                        //바운드 초기화
+                        bounds = new kakao.maps.LatLngBounds();
                     }
 
                     //폴리곤 배열
@@ -182,7 +208,7 @@
                     var markers = [];
                     //마커 정보 창
                     var infoWindows = [];
-
+                    
                     //검색창에서 엔터하면
                     let enterSearch
                     (function($){
@@ -387,6 +413,9 @@
 
                         //자동 정보창 열기
                         infoWindows[0].open(map, markers[0]);
+
+                        //바운드 조절
+                        setBounds();
                     }
 
                     //일반폴리곤과 구멍있는폴리곤 나누기
@@ -440,6 +469,7 @@
                             for(var i=1; i < normalPolygon.length; i++)
                             {
                                 polygonPath.push(new kakao.maps.LatLng(normalPolygon[i].split(",")[1].trim(), normalPolygon[i].split(",")[0].trim()));
+                                points.push(new kakao.maps.LatLng(normalPolygon[i].split(",")[1].trim(), normalPolygon[i].split(",")[0].trim()));
                             }
                                                 
                         // 지도에 표시할 다각형을 생성합니다
@@ -465,11 +495,13 @@
                         for(var i=1; i < backGroup.length; i++)
                         {
                             path.push(new kakao.maps.LatLng(backGroup[i].split(",")[1].trim(), backGroup[i].split(",")[0].trim()));
+                            points.push(new kakao.maps.LatLng(backGroup[i].split(",")[1].trim(), backGroup[i].split(",")[0].trim()));
                         }
 
                         for(var i=1; i < holeGroup.length; i++)
                         {
                             hole.push(new kakao.maps.LatLng(holeGroup[i].split(",")[1].trim(), holeGroup[i].split(",")[0].trim()));
+                            points.push(new kakao.maps.LatLng(holeGroup[i].split(",")[1].trim(), holeGroup[i].split(",")[0].trim()));
                         }
                                             
                         // 지도에 표시할 다각형을 생성합니다
