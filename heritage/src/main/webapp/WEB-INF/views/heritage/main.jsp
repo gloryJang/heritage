@@ -409,11 +409,12 @@
                         }
 
                         //화면 이동하기
-                        moveTo(center);
+                        //moveTo(center);
 
                         //자동 정보창 열기
                         infoWindows[0].open(map, markers[0]);
 
+                        //화면 이동하기
                         //바운드 조절
                         setBounds();
                     }
@@ -519,6 +520,7 @@
                         polygons[polygons.length-1].setMap(map);
                     }
 
+                    /*
                     function moveTo(center)
                     {
                         //[ 삭제
@@ -529,6 +531,7 @@
                         var moveLatLon = new kakao.maps.LatLng(center.split(",")[1].trim(), center.split(",")[0].trim()) // 지도의 중심좌표
                         map.panTo(moveLatLon);
                     }
+                    */
                     
                 </script> 
                 
