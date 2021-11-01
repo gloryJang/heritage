@@ -61,9 +61,9 @@
                 .overlay_info:nth-of-type(n) {border:0; box-shadow: 0px 1px 2px #888;}
                 .overlay_info a {display: block; background: #64b3f4; background: #64b3f4 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center; text-decoration: none; color: #fff; padding:12px 36px 12px 14px; font-size: 10px; border-radius: 6px 6px 0 0}
                 .overlay_info a strong {color: #fff; padding-left: 5px; font-size: 14px; font-weight: 200;}
-                .overlay_info .desc {padding:14px;position: relative; min-width: 190px; height: 56px}
-                .overlay_info img {vertical-align: top; width: 56px; height: 56px;}
-                .overlay_info .address {font-size: 12px; color: #333; position: absolute; left: 80px; right: 14px; top: 24px; white-space: normal}
+                .overlay_info .desc {padding:10px;position: relative; min-width: 190px; height: 56px}
+                .overlay_info img {vertical-align: top; width: 56px; height: 56px; object-fit: cover;}
+                .overlay_info .address {font-size: 12px; color: #333; position: absolute; left: 80px; right: 14px; top: 10px; white-space: normal}
                 .overlay_info:after {content:'';position: absolute; margin-left: -11px; left: 50%; bottom: -12px; width: 22px; height: 12px; background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png) no-repeat 0 bottom;}
 
             </style>
@@ -95,7 +95,7 @@
 
                         <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
 
-                        <div  style="margin: 20px;">
+                        <div  style="margin: 30px;">
                             <ul id="heritageList" class="list-group">
                             </ul>
                         </div>
@@ -133,7 +133,13 @@
                         
                         // 지도의 현재 레벨을 얻어옵니다
                         var level = map.getLevel();                    
-                    });               
+                    });             
+                    
+                    //바운드를 위한 포인트
+                    var points = [];
+
+                    // 지도를 재설정할 범위정보를 가지고 있을 LatLngBounds 객체를 생성합니다
+                    var bounds;   
                 </script>
 
                 <script type="text/javascript">
@@ -141,10 +147,60 @@
 
                         //리스트그룹의 아이템을 클릭하면
                         $('#heritageList').on('click', '.list-group-item', function(e) {
-                            var selectedItem = $(this).text().split('   ')[0];
+                            var selectedItem = $(this).text().split('   ')[1];
+  
                             heritageOnMap(selectedItem);
                         });
                     });
+
+                    function setBounds(){
+                        for(var i = 0; i < points.length; i++)
+                        {
+                            bounds.extend(points[i]);
+                        }
+
+                        // LatLngBounds 객체에 추가된 좌표들을 기준으로 지도의 범위를 재설정합니다
+                        // 이때 지도의 중심좌표와 레벨이 변경될 수 있습니다
+                        map.setBounds(bounds);
+                    }
+
+                    function refreshSymbol()
+                    {
+                        //지도에 있는 도형 지우기
+                        if(polygons != null)
+                        {
+                            for(var i=0; i<polygons.length; i++)
+                            {
+                                polygons[i].setMap(null);
+                            }
+                            polygons = [];
+                        }
+
+                        //마커 지우기
+                        if(markers != null)
+                        {
+                            for(var i=0; i<markers.length; i++)
+                            {
+                                markers[i].setMap(null);
+                            }
+                            markers = [];
+                        }
+
+                        //정보창 지우기
+                        if(infoWindows != null)
+                        {
+                            infoWindows = [];
+                        }
+
+                        //포인트 초기화
+                        if(points != null)
+                        {
+                            points = [];
+                        }
+
+                        //바운드 초기화
+                        bounds = new kakao.maps.LatLngBounds();
+                    }
 
                     //폴리곤 배열
                     var polygons = [];
@@ -152,12 +208,14 @@
                     var markers = [];
                     //마커 정보 창
                     var infoWindows = [];
-
+                    
                     //검색창에서 엔터하면
                     let enterSearch
                     (function($){
                         enterSearch = () => {
                             if(window.event.keyCode == 13){
+                                closeAllInfoWindows();
+                                refreshSymbol();
                                 searchHeritage();
                             }
                         }
@@ -202,7 +260,7 @@
                         // 마커 이미지를 생성합니다    
                         var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
 
-                        //검색 결과 수만큼 만들긴
+                        //검색 결과 수만큼 만들기
                         for(var i=0; i<data.length; i++)
                         {
                             var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
@@ -240,18 +298,26 @@
                         }
                     }
 
-                    // 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
+                    // 마커를 클릭했을 때 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
                     function makeClickListener(map, marker, infowindow) {
                         return function() {
+                            closeAllInfoWindows(); 
+
                             infowindow.open(map, marker);
                         };
                     }
 
-                    /*  지도 클릭 이벤트
-                    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
-                        
+                    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+                        closeAllInfoWindows();                        
                     });
-                    */
+
+                    function closeAllInfoWindows()
+                    {
+                        for(var i=0; i < infoWindows.length; i++)
+                        {
+                            infoWindows[i].close();
+                        }
+                    }
                     
                     //검색 결과 리스트 보여주기
                     function showHeritageList(data)
@@ -260,14 +326,17 @@
 
                         for (var i=0; i<data.length; i++)
                         {
-                            heritageList.append('<li id="heritageItem" class="list-group-item list-group-item-action" style="text-align:left; padding:0px; height:80px;">'
-                                + '<div style="float:left; background-color: #1679ca; color:#fff; width:10%; height:80px;">' + data[i]['ITEMNAME'] +'</div>'
-                                + '<div style="float:right; width:90%; padding:5px;">'
-                                +   '<div style="float:right; padding:0px"><img src="' + data[i]['IMAGE'] + '" alt="" style="width: 90px; height: 70px; margin:0px"></div>'
-                                +   '<div style="padding-left: 5px;"><span id="heritageName" style="color: #1679ca; font-size: 1.1em; font-weight:bold;">' + data[i]['HERITAGENAME'] + '</span>'
-                                +        '<span style="color: black; font-size:0.8em">   ' + data[i]['HERITAGETYPE'] + '</span></div>'
-                                +   '<div style="padding-left: 5px;"><span style="color: darkgray; font-size:0.8em">' + data[i]['ADDRESS'] + '</span></div>'
-                                + '</div></li>'
+                            heritageList.append('<li id="heritageItem" class="list-group-item list-group-item-action" style="text-align:left; padding:10px; min-height:130px;">'
+                                + '<div style="float:left; postion:relative; width: calc(100% - 108px);">'
+                                +   '<div style="padding:5px">'
+                                +       '<div><span style="color: #03820d; font-size:0.8em; font-weight:bold;">' + data[i]['ITEMNAME'] +'</span>'
+                                +                                              '<span id="heritageName" style="color: #1679ca; font-size: 1.1em; font-weight:bold;">   ' + data[i]['HERITAGENAME'] + '</span>'
+                                +                                              '<span style="color: black; font-size:0.8em">   ' + data[i]['HERITAGETYPE'] + '</span></div>'
+                                +       '<div><span style="color: darkgray; font-size:0.8em">' + data[i]['ADDRESS']
+                                +                                               '<br>(문화재 주소 넣을 자리)</span></div>'
+                                +   '</div>'
+                                + '</div>'
+                                + '<div style="float:right; width: 100px; overflow:hidden; verical-align:middle; margin:5px 0px 5px 0px;"><img src="' + data[i]['IMAGE'] + '" alt="" style="display:block; width:100px; height:100px; object-fit:cover; margin:0px; border-radius: 7px;"></div></li>'
                             );                    
                         }                      
                     }
@@ -281,6 +350,7 @@
                             data: {name: selectedItem},
                             dataType:"JSON",
                             success: function(data){
+                                closeAllInfoWindows();
                                 focusTo(data);
                             },
                             error: function(){
@@ -300,18 +370,17 @@
                             }
                         }
 
-                        //지도에 있는 마커 지우기
-                        if(markers != null)
-                        {
-                            for(var i=0; i<markers.length; i++)
-                            {
-                                markers[i].setMap(null);
-                            }
-                        }
+                        refreshSymbol();
 
                         //마커 만들기
                         makemarkers(data);
 
+                        //폴리곤 가공 및 그리기
+                        processPolygon(data);
+                    }
+
+                    function processPolygon(data)
+                    {
                         var figureType = data[0]['FIGURETYPE'];
                         var center = data[0]['CENTER'];
                         var heritageCoordinate = String(data[0]['COORDINATES']);
@@ -340,7 +409,14 @@
                         }
 
                         //화면 이동하기
-                        moveTo(center);
+                        //moveTo(center);
+
+                        //자동 정보창 열기
+                        infoWindows[0].open(map, markers[0]);
+
+                        //화면 이동하기
+                        //바운드 조절
+                        setBounds();
                     }
 
                     //일반폴리곤과 구멍있는폴리곤 나누기
@@ -394,6 +470,7 @@
                             for(var i=1; i < normalPolygon.length; i++)
                             {
                                 polygonPath.push(new kakao.maps.LatLng(normalPolygon[i].split(",")[1].trim(), normalPolygon[i].split(",")[0].trim()));
+                                points.push(new kakao.maps.LatLng(normalPolygon[i].split(",")[1].trim(), normalPolygon[i].split(",")[0].trim()));
                             }
                                                 
                         // 지도에 표시할 다각형을 생성합니다
@@ -419,11 +496,13 @@
                         for(var i=1; i < backGroup.length; i++)
                         {
                             path.push(new kakao.maps.LatLng(backGroup[i].split(",")[1].trim(), backGroup[i].split(",")[0].trim()));
+                            points.push(new kakao.maps.LatLng(backGroup[i].split(",")[1].trim(), backGroup[i].split(",")[0].trim()));
                         }
 
                         for(var i=1; i < holeGroup.length; i++)
                         {
                             hole.push(new kakao.maps.LatLng(holeGroup[i].split(",")[1].trim(), holeGroup[i].split(",")[0].trim()));
+                            points.push(new kakao.maps.LatLng(holeGroup[i].split(",")[1].trim(), holeGroup[i].split(",")[0].trim()));
                         }
                                             
                         // 지도에 표시할 다각형을 생성합니다
@@ -441,6 +520,7 @@
                         polygons[polygons.length-1].setMap(map);
                     }
 
+                    /*
                     function moveTo(center)
                     {
                         //[ 삭제
@@ -451,6 +531,7 @@
                         var moveLatLon = new kakao.maps.LatLng(center.split(",")[1].trim(), center.split(",")[0].trim()) // 지도의 중심좌표
                         map.panTo(moveLatLon);
                     }
+                    */
                     
                 </script> 
                 
