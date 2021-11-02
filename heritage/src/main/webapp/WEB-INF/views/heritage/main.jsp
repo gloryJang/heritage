@@ -268,9 +268,7 @@
                             positions.push(
                                 {
                                     content: '<div class="overlay_info">' +
-                                            '    <a href="https://www.heritage.go.kr/heri/cul/culSelectDetail.do?VdkVgwKey='
-                                            +    data[i]['HERITAGECODE'].substr(0,2) + ',' + data[i]['HERITAGECODE'].substr(2,8) + ',' + data[i]['HERITAGECODE'].substr(10,2)
-                                            +    '&pageNo__=5_1_1_0&pageNo=1_1_2_0" target="_blank">'
+                                            '    <a href=" " target="_blank">'
                                             +    data[i]['ITEMNAME'] + '<strong>'
                                             +    data[i]['HERITAGENAME'] + '</strong></a>' +
                                             '    <div class="desc">' +
@@ -436,9 +434,10 @@
                             }
                             drawNormalPolygon(normalPolygon);                    
                         }
-                        //구멍있는폴리곤이라면
-                        else if (whichPolygon.split("[ [").length == 3)
+                        //구멍있는폴리곤이라면(구멍이 여러 개일 수 있기 때문에 2 초과)
+                        else if (whichPolygon.split("[ [").length > 2)
                         {
+                            //'['을 없애기 위해
                             whichPolygon = whichPolygon.substr(1, whichPolygon.length-1).trim();
                             var holePolygon = whichPolygon.split("[ [ ");
 
@@ -448,15 +447,24 @@
                             }
 
                             var backGroup = holePolygon[1].split("[");
-                            var holeGroup = holePolygon[2].split("[");
+                            //첫번째 두번째는 해당하지 않으므로 -2
+                            var holeGroup = new Array(holePolygon.length-2);
 
+                            //배경폴리곤은 1부터
                             for(var i=1; i<backGroup.length; i++)
                             {
                                 backGroup[i] = backGroup[i].split(']')[0].trim();
                             }
-                            for(var i=1; i<holeGroup.length; i++)
+
+                            //구멍모양은 0부터
+                            for(var i=0; i<holeGroup.length; i++)
                             {
-                                holeGroup[i] = holeGroup[i].split(']')[0].trim();
+                                holeGroup[i] = holePolygon[i+2].split("[")
+
+                                for(var j=0; j<holeGroup[i].length; j++)
+                                {
+                                    holeGroup[i][j] = holeGroup[i][j].split(']')[0].trim();
+                                }
                             }
 
                             drawHolePolygon(backGroup, holeGroup);
@@ -491,7 +499,7 @@
                     function drawHolePolygon(backGroup, holeGroup)
                     {
                         var path = [];
-                        var hole = [];
+                        var hole = new Array(holeGroup.length);
 
                         for(var i=1; i < backGroup.length; i++)
                         {
@@ -499,15 +507,28 @@
                             points.push(new kakao.maps.LatLng(backGroup[i].split(",")[1].trim(), backGroup[i].split(",")[0].trim()));
                         }
 
-                        for(var i=1; i < holeGroup.length; i++)
+                        for(var i=0; i < holeGroup.length; i++)
                         {
-                            hole.push(new kakao.maps.LatLng(holeGroup[i].split(",")[1].trim(), holeGroup[i].split(",")[0].trim()));
-                            points.push(new kakao.maps.LatLng(holeGroup[i].split(",")[1].trim(), holeGroup[i].split(",")[0].trim()));
+                            hole[i] = new Array(holeGroup[i].length);
+
+                            for(var j=1; j<holeGroup[i].length; j++)
+                            {
+                                hole[i].push(new kakao.maps.LatLng(holeGroup[i][j].split(",")[1].trim(), holeGroup[i][j].split(",")[0].trim()));
+                                points.push(new kakao.maps.LatLng(holeGroup[i][j].split(",")[1].trim(), holeGroup[i][j].split(",")[0].trim()));
+                            } 
                         }
-                                            
+                                     
+                        //구멍폴리곤 좌표 넣기
+                        var pathPolygon = [path];
+
+                        for(var i=0; i<hole.length; i++)
+                        {
+                            pathPolygon.push(hole[i]);
+                        }
+
                         // 지도에 표시할 다각형을 생성합니다
                         polygons.push(new kakao.maps.Polygon({
-                        path: [path, hole], // 그려질 다각형의 좌표 배열입니다
+                        path: pathPolygon, // 그려질 다각형의 좌표 배열입니다
                         strokeWeight: 3, // 선의 두께입니다
                         strokeColor: '#cf1717', // 선의 색깔입니다
                         strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
