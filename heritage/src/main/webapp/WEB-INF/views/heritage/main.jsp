@@ -250,7 +250,7 @@
                                 showHeritageList(data);
                                 makemarkers(data);
                                 //결과 카운트 출력
-                                document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '점 / 명승 : ' + ms + '점 / 천연기념물 : ' + cy + '점';
+                                document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
                             },
                             error: function(){
                                 alert("error"); 
