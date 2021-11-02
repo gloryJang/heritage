@@ -93,9 +93,10 @@
                                 </div>
                         </div>
 
-                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
+                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 10px 30px;">
+                        <div><span id="resultCount" style="text-align: center; color: black; margin: 0px 30px 0px 30px; font-size: 0.8em;"></span></div>
 
-                        <div  style="margin: 30px;">
+                        <div  style="margin: 10px 30px 30px 30px;">
                             <ul id="heritageList" class="list-group">
                             </ul>
                         </div>
@@ -105,7 +106,7 @@
                 </div>
     
             <!-- Main -->
-                <div id="main" style="height: 100%; width: 70%; float:right; margin:0;"></div> 
+                <div id="main" style="height: 100%; width: 70%; float:right; margin:0;"></div>
 
                 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6c83b812ba7b8d29c856df5598527c46"></script>
                 <script>
@@ -221,6 +222,13 @@
                         }
                     })(jQuery)
 
+                    //카운트를 위한 변수
+                    var gb = 0;
+                    var bm = 0;
+                    var sj = 0;
+                    var ms = 0;
+                    var cy = 0;
+
                     function searchHeritage()
                     {
                         //검색어를 입력하지 않았을 때
@@ -241,6 +249,8 @@
                             success: function(data){
                                 showHeritageList(data);
                                 makemarkers(data);
+                                //결과 카운트 출력
+                                document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '점 / 명승 : ' + ms + '점 / 천연기념물 : ' + cy + '점';
                             },
                             error: function(){
                                 alert("error"); 
@@ -260,9 +270,27 @@
                         // 마커 이미지를 생성합니다    
                         var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
 
+                        //카운트 초기화
+                        gb = 0;
+                        bm = 0;
+                        sj = 0;
+                        ms = 0;
+                        cy = 0;                        
+
                         //검색 결과 수만큼 만들기
                         for(var i=0; i<data.length; i++)
                         {
+                            if (data[i]['ITEMNAME'] == "국보")
+                            {gb++}
+                            else if(data[i]['ITEMNAME'] == "보물")
+                            {bm++}
+                            else if(data[i]['ITEMNAME'] == "사적")
+                            {sj++}
+                            else if(data[i]['ITEMNAME'] == "명승")
+                            {ms++}
+                            else if(data[i]['ITEMNAME'] == "천연기념물")
+                            {cy++}
+
                             var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
 
                             positions.push(
