@@ -296,7 +296,9 @@
                             positions.push(
                                 {
                                     content: '<div class="overlay_info">' +
-                                            '    <a href=" " target="_blank">'
+                                            '    <a href="https://www.heritage.go.kr/heri/cul/culSelectDetail.do?VdkVgwKey='
+                                            +    data[i]['HERITAGECODE'].substr(0,2) + ',' + data[i]['HERITAGECODE'].substr(2,8) + ',' + data[i]['HERITAGECODE'].substr(10,2)
+                                            +    '&pageNo__=5_1_1_0&pageNo=1_1_2_0" target="_blank">'
                                             +    data[i]['ITEMNAME'] + '<strong>'
                                             +    data[i]['HERITAGENAME'] + '</strong></a>' +
                                             '    <div class="desc">' +
