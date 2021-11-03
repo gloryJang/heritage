@@ -291,9 +291,10 @@
                                 showHeritageList(data);
                                 makemarkers(data);
 
-                                 //결과 카운트 출력
-                                 document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
+                                //결과 카운트 출력
+                                document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
                                 
+                                //검색 결과가 없을 때
                                 if(data.length == 0)
                                 {
                                     return;
