@@ -66,6 +66,12 @@
                 .overlay_info .address {font-size: 12px; color: #333; position: absolute; left: 80px; right: 14px; top: 10px; white-space: normal}
                 .overlay_info:after {content:'';position: absolute; margin-left: -11px; left: 50%; bottom: -12px; width: 22px; height: 12px; background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png) no-repeat 0 bottom;}
 
+                /*Css to target the dropdownbox*/
+                ul.ui-autocomplete {
+                    overflow: hidden;
+                    font-size: 0.8em;
+                }
+                
             </style>
             
         </head>
@@ -90,7 +96,7 @@
                             <div class="input-group rounded">
                                 <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 경복궁)" aria-label="Search"
                                 aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4;"/>
-                                </div>
+                            </div>
                         </div>
 
                         <hr style="color: #6bc010; height:2px; margin: 20px 30px 10px 30px;">
@@ -145,6 +151,32 @@
 
                 <script type="text/javascript">
                     $(document).ready(function(){
+
+                        //자동완성 기능
+                        var allList = [];
+                        //문화재 전체 불러오기
+                        var loadHeritageString = '"${heritageList}"/>';
+                        var loadHeritageList = loadHeritageString.split('heritageName=');
+                        for(var i=1; i<loadHeritageList.length; i++)
+                        {
+                            allList.push(loadHeritageList[i].split(`), HeritageVO`)[0]);
+                        }
+
+                        //자동완성 기능
+                        $(function () {	//화면 로딩후 시작
+                            $("#searchWord").autocomplete({  //오토 컴플릿트 시작
+                                source: function(request, response) {
+                                        var results = $.ui.autocomplete.filter(allList, request.term);        
+                                        response(results.slice(0, 10));
+                                    },	// source는 data.js파일 내부의 List 배열
+                                focus : function(event, ui) { // 방향키로 자동완성단어 선택 가능하게 만들어줌	
+                                    return false;
+                                },
+                                minLength: 1,// 최소 글자수
+                                delay: 100,	//autocomplete 딜레이 시간(ms)
+                                //disabled: true, //자동완성 기능 끄기
+                            });
+                        });
 
                         //리스트그룹의 아이템을 클릭하면
                         $('#heritageList').on('click', '.list-group-item', function(e) {
@@ -209,12 +241,15 @@
                     var markers = [];
                     //마커 정보 창
                     var infoWindows = [];
-                    
+
                     //검색창에서 엔터하면
                     let enterSearch
                     (function($){
                         enterSearch = () => {
                             if(window.event.keyCode == 13){
+                                //자동완성 창 닫기
+                                document.getElementById('searchWord').blur();
+
                                 closeAllInfoWindows();
                                 refreshSymbol();
                                 searchHeritage();
@@ -582,10 +617,11 @@
                         var moveLatLon = new kakao.maps.LatLng(center.split(",")[1].trim(), center.split(",")[0].trim()) // 지도의 중심좌표
                         map.panTo(moveLatLon);
                     }
-                    */
-                    
+                    */                    
                 </script> 
-                
+
+                <link href="http://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link> 
+
                 <script src="/resources/assets/js/jquery.min.js"></script>
                 <script src="/resources/assets/js/jquery.scrolly.min.js"></script>
                 <script src="/resources/assets/js/jquery.scrollex.min.js"></script>
@@ -593,6 +629,8 @@
                 <script src="/resources/assets/js/breakpoints.min.js"></script>
                 <script src="/resources/assets/js/util.js"></script>
                 <script src="/resources/assets/js/main.js"></script>
+
+                <script src="http://code.jquery.com/ui/1.12.0/jquery-ui.js" ></script>
 
         </body>
     </html>

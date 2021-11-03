@@ -4,11 +4,23 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.zerock.mapper.HeritageMapper">
 
-<select id="loadList" resultType="java.util.HashMap">
-  select heritagecode, itemname, heritagetype, heritagename, address, center, image from heritage where replace(heritageName, ' ', '') like '%'||replace(#{name}, ' ', '')||'%' order by length(heritagename)
-  </select>
+	<select id="loadList" resultType="java.util.HashMap">
+  		select heritagecode, itemname, heritagetype, heritagename, address, center, image 
+  		from heritage
+  		where replace(heritageName, ' ', '') like '%'||replace(#{name}, ' ', '')||'%'
+  		order by length(heritagename)
+  	</select>
   
-  <select id="loadOneHeritage" resultType="java.util.HashMap">
-  select * from heritage where heritageName = #{name}
-  </select>
+  	<select id="loadOneHeritage" resultType="java.util.HashMap">
+  		select *
+  		from heritage
+  		where heritageName = #{name}
+  	</select>
+  
+  	<select id="getAllList" resultType="org.zerock.domain.HeritageVO">
+  		select heritagename
+  		from heritage
+  	</select>
+
 </mapper>
+
