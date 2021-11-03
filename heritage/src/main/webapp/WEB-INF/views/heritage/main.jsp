@@ -57,9 +57,9 @@
                  border: unset;
                 }
 
-                .overlay_info {border-radius: 6px; margin: -12px 0px 0px -12px; float:left;position: relative; border: 1px solid #fff; border-bottom: 2px solid #fff;background-color:#fff; -webkit-box-sizing: unset; box-sizing: unset;}
+                .overlay_info {border-radius: 6px; margin: -12px -5px 0px -5px; float:left;position: relative; border: 1px solid #fff; border-bottom: 2px solid #fff;background-color:#fff; -webkit-box-sizing: unset; box-sizing: unset;}
                 .overlay_info:nth-of-type(n) {border:0; box-shadow: 0px 1px 2px #888;}
-                .overlay_info a {display: block; background: #64b3f4; background: #64b3f4 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center; text-decoration: none; color: #fff; padding:12px 36px 12px 14px; font-size: 10px; border-radius: 6px 6px 0 0}
+                .overlay_info a {display: block; background: #64b3f4; background: #64b3f4 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center; text-decoration: none; color: #fff; padding:12px 36px 12px 14px; font-size: 10px; border-radius: 6px 6px 0 0; white-space: nowrap;}
                 .overlay_info a strong {color: #fff; padding-left: 5px; font-size: 14px; font-weight: 200;}
                 .overlay_info .desc {padding:10px;position: relative; min-width: 190px; height: 56px}
                 .overlay_info img {vertical-align: top; width: 56px; height: 56px; object-fit: cover;}
@@ -88,7 +88,7 @@
 
                         <div id="search" style="margin: 0px 30px 0px 30px;"">
                             <div class="input-group rounded">
-                                <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 서울 숭례문)" aria-label="Search"
+                                <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 경복궁)" aria-label="Search"
                                 aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4;"/>
                                 </div>
                         </div>
