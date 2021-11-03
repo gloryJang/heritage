@@ -284,7 +284,10 @@
                             success: function(data){
                                 
                                 if(data.length == 0)
-                                {return;}
+                                {
+                                    $("#searchWord").focus();
+                                    return;
+                                }
 
                                 //포인트 초기화
                                 points = []
