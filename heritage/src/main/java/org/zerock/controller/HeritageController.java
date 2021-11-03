@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,9 +26,10 @@ public class HeritageController {
 	private HeritageService service;
 
 	@GetMapping("")
-	public String main() {
+	public String main(Model model) {
 
-		log.info("main ï¿½ï¿½ï¿½ï¿½");
+		log.info("main ÆäÀÌÁö");
+		model.addAttribute("heritageList", service.getAllList());
 
 	return "/heritage/main";
 	}

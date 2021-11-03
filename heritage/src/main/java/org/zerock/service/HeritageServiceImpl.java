@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zerock.domain.HeritageVO;
 import org.zerock.mapper.HeritageMapper;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +41,12 @@ public class HeritageServiceImpl implements HeritageService {
 		paramMap.put("name", name);
 
 		return mapper.loadOneHeritage(name);
+	}
+
+	@Override
+	public List<HeritageVO> getAllList() {
+		
+		return mapper.getAllList();
 	}
 	
 	
