@@ -282,8 +282,19 @@
                             data: {name: $('#searchWord').val().trim()},
                             dataType:"JSON",
                             success: function(data){
+                                
+                                if(data.length == 0)
+                                {return;}
+
+                                //포인트 초기화
+                                points = []
+
                                 showHeritageList(data);
                                 makemarkers(data);
+
+                                //바운드 조절
+                                setBounds();
+
                                 //결과 카운트 출력
                                 document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
                             },
@@ -344,6 +355,8 @@
                                     latlng : new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim())
                                 }
                             );
+
+                            points.push(new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim()));
                             
                             // 마커를 생성합니다
                             markers.push(new kakao.maps.Marker({
