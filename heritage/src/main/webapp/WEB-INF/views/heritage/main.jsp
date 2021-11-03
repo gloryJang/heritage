@@ -282,12 +282,8 @@
                             data: {name: $('#searchWord').val().trim()},
                             dataType:"JSON",
                             success: function(data){
-                                
-                                if(data.length == 0)
-                                {
-                                    $("#searchWord").focus();
-                                    return;
-                                }
+                                //인풋창으로 포커스 이동
+                                $("#searchWord").focus();
 
                                 //포인트 초기화
                                 points = []
@@ -295,11 +291,16 @@
                                 showHeritageList(data);
                                 makemarkers(data);
 
+                                 //결과 카운트 출력
+                                 document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
+                                
+                                if(data.length == 0)
+                                {
+                                    return;
+                                }
+
                                 //바운드 조절
                                 setBounds();
-
-                                //결과 카운트 출력
-                                document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
                             },
                             error: function(){
                                 alert("error"); 
