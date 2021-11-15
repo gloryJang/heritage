@@ -2042,12 +2042,6 @@ input, select, textarea {
 		-ms-justify-content: space-between;
 		justify-content: space-between;
 		background-color: rgba(255, 255, 255, 0);
-		/*
-		background-image: url('images/background_heritage.png');
-		background-repeat: no-repeat;
-		background-size: cover;
-		*/
-
 		box-shadow: inset -0.25em 0 0.25em 0 rgba(0, 0, 0, 0.1);
 		color: #fff;
 		height: 100%;
@@ -2056,7 +2050,7 @@ input, select, textarea {
 		position: fixed;
 		text-align: center;
 		top: 0;
-		width: 375px;
+		width: 390px;
 	}
 
 		#header .top {
@@ -2431,12 +2425,6 @@ input, select, textarea {
 				z-index: 10002;
 				width: 275px;
 				background-color: rgba(255, 255, 255, 0);
-
-				/*
-				background-image: url('images/background_heritage.png');
-				background-repeat: no-repeat;
-				background-size: cover;
-				*/
 				box-shadow: inset -0.25em 0 0.25em 0 rgba(0, 0, 0, 0.125);
 			}
 

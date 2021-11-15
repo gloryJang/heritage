@@ -37,16 +37,23 @@
                     width: 100%;
                 }
 
-                ::-webkit-scrollbar {
+                /*
+                ::-webkit-scrollbar { 
+                display: none;
+                width: 0 !important;
+            }
+            */
+            
+                 ::-webkit-scrollbar {
                 width: 10px;
                 }
                 
-                ::-webkit-scrollbar-track {
+                 ::-webkit-scrollbar-track {
                 background: rgba(255,255,255,0);
                 border-radius: 5px;;
                 }
                 
-                ::-webkit-scrollbar-thumb {
+                 ::-webkit-scrollbar-thumb {
                 background: linear-gradient(#c2e59c, #64b3f4);
                 border-radius: 5px;
                 }
@@ -56,6 +63,33 @@
                  box-sizing: unset;
                  border: unset;
                 }
+
+                ul {
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+                    overflow: hidden;
+                    background-color: #258fff;
+                    }
+
+                    li {
+                    float: left;
+                    font-size: 0.8em;
+                    }
+
+                    li a {
+                    display: block;
+                    color: #eaf4ff;
+                    text-align: center;
+                    padding: 16px;
+                    text-decoration: none;
+                    }
+
+                    li a:hover {
+                    background-color: #1166dd;
+                    font-weight: bold;
+                    color: white;
+                    }
 
                 .overlay_info {border-radius: 6px; margin: -12px -5px 0px -5px; float:left;position: relative; border: 1px solid #fff; border-bottom: 2px solid #fff;background-color:#fff; -webkit-box-sizing: unset; box-sizing: unset;}
                 .overlay_info:nth-of-type(n) {border:0; box-shadow: 0px 1px 2px #888;}
@@ -71,55 +105,73 @@
                     overflow: hidden;
                     font-size: 0.8em;
                 }
+
+                .ui-menu-item {
+                    float: unset;
+                }
                 
             </style>
             
         </head>
-        <body class="is-preload">
+        <body class="is-preload" style="overflow:hidden;">
 
             <!-- alert 창 디자인 -->
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
             <!-- Header -->
-                <div id="header" style="width: 30%; float: left;">
-    
-                    <div class="top">
-    
-                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
+                <div id="header" style="width: 390px; float: left; font-family: 맑은고딕, Malgun Gothic, dotum, gulim, sans-serif;">
+                    <div class="top" style="height: 166px; overflow: hidden;">
+                        <div style="background-color: #258fff; padding:20px 0px 0px 0px; position: fixed; top:0; width: 390px;">
+                            <div id="logo" style="margin: 0px 20px 10px 20px;">
+                                <div  style="width:25px; float: left; padding-top: 2px;">
+                                    <img src="/resources/images/logo.png" style="width: 25px; height: auto;">
+                                </div>
+                                <div style="float: right; width: 300px; padding-left: -10px;">
+                                    <h1 id="title" style="color: white; text-align: left; font-size: 1.3em; font-weight: 400;">문화재 사물주소 안내 서비스</h1>
+                                    <p style="color: white; font-size: 0.7em;">Cultural Heritage AoT Service</p>
+                                </div> 
+                            </div>
 
-                        <div id="logo">
-                            <h1 id="title"">문화재 상세주소 서비스</h1>
-                            <p>Cultural Heritage Detailed Address Service</p>
-                        </div>
-
-                        <div id="search" style="margin: 0px 30px 0px 30px;"">
-                            <div class="input-group rounded">
-                                <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 경복궁)" aria-label="Search"
-                                aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4;"/>
+                            <div id="search" style="margin: 0px 20px 5px 20px;"">
+                                <div class="input-group rounded">
+                                    <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 경복궁)" aria-label="Search"
+                                    aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4; height: 50px; padding:10px;"/>
+                                </div>
+                            </div>
+                            <div>
+                                <ul>
+                                    <li class="orderItem" id="menuAll"><a href="#" onclick="preventClick(event, '전체')">전체<br>(0)</a></li>
+                                    <li class="orderItem" id="menuGB"><a href="#" onclick="preventClick(event, '국보')">국보<br>(0)</a></li>
+                                    <li class="orderItem" id="menuBM"><a href="#" onclick="preventClick(event, '보물')">보물<br>(0)</a></li>
+                                    <li class="orderItem" id="menuSJ"><a href="#" onclick="preventClick(event, '사적')">사적<br>(0)</a></li>
+                                    <li class="orderItem" id="menuMS"><a href="#" onclick="preventClick(event, '명승')">명승<br>(0)</a></li>
+                                    <li class="orderItem" id="menuCH"><a href="#" onclick="preventClick(event, '천연기념물')">천연<br>(0)</a></li>
+                                </ul> 
                             </div>
                         </div>
-
-                        <hr style="color: #6bc010; height:2px; margin: 20px 30px 10px 30px;">
-                        <div><span id="resultCount" style="text-align: center; color: black; margin: 0px 30px 0px 30px; font-size: 0.8em;"></span></div>
-
-                        <div  style="margin: 10px 30px 30px 30px;">
-                            <ul id="heritageList" class="list-group">
-                            </ul>
-                        </div>
-    
                     </div>
-  
                 </div>
-    
+                <div class="resultWindow" style="width: 390px; float: left; font-family: 맑은고딕, Malgun Gothic, dotum, gulim, sans-serif; margin: 186px 0px 10px 0px; overflow:auto; position:absolute; top: 0; left:0; right:0; bottom:0;">
+                    <div>
+                        <span id="resultCount" style="text-align: center; color: black; margin: 0px 30px 0px 30px; font-size: 0.8em;"></span>
+                    </div>
+
+                    <div  style="margin: 10px 30px 30px 30px; overflow: hidden;">
+                        <ul id="heritageList" class="list-group">
+                        </ul>
+                    </div>
+                </div>
+                
+                    
             <!-- Main -->
-                <div id="main" style="height: 100%; width: 70%; float:right; margin:0;"></div>
+                <div id="main" style="position:relative; width: calc(100% - 390px); height: 100%; float:right; margin:0;"></div>
 
                 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6c83b812ba7b8d29c856df5598527c46"></script>
                 <script>
                     var mapContainer = document.getElementById('main'), // 지도를 표시할 div 
                         mapOption = { 
                             center: new kakao.maps.LatLng(37.579512, 126.977019), // 지도의 중심좌표
-                            level: 3 // 지도의 확대 레벨
+                            level: 4 // 지도의 확대 레벨
                         };  
                     
                     var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
@@ -185,6 +237,17 @@
                             heritageOnMap(selectedItem);
                         });
                     });
+
+                    //분류 이동 막기
+                    function preventClick(e, order){
+                        e.preventDefault()
+                        
+                        divideResult(order);
+                    }
+
+                    function divideResult(order){
+                        alert(order);
+                    }
 
                     function setBounds(){
                         for(var i = 0; i < points.length; i++)
@@ -282,9 +345,8 @@
                             data: {name: $('#searchWord').val().trim()},
                             dataType:"JSON",
                             success: function(data){
-                                
-                                if(data.length == 0)
-                                {return;}
+                                //인풋창으로 포커스 이동
+                                $("#searchWord").focus();
 
                                 //포인트 초기화
                                 points = []
@@ -292,14 +354,20 @@
                                 showHeritageList(data);
                                 makemarkers(data);
 
+                                //결과 카운트 출력
+                                //document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
+                                
+                                //검색 결과가 없을 때
+                                if(data.length == 0)
+                                {
+                                    return;
+                                }
+
                                 //바운드 조절
                                 setBounds();
-
-                                //결과 카운트 출력
-                                document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
                             },
-                            error: function(){
-                                alert("error"); 
+                            error: function(request, status, error){
+                                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error); 
                             }
                         });
                     }
@@ -332,14 +400,17 @@
                             {bm++}
                             else if(data[i]['ITEMNAME'] == "사적")
                             {sj++}
-                            else if(data[i]['ITEMNAME'] == "명승")
+                            else if(data[i]['ITEMNAME'] == "명승") 
                             {ms++}
                             else if(data[i]['ITEMNAME'] == "천연기념물")
                             {cy++}
 
                             var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
 
-                            positions.push(
+                            //사물주소가 없다면
+                            if(data[i]['AOT'] === undefined)
+                            {
+                                positions.push(
                                 {
                                     content: '<div class="overlay_info">' +
                                             '    <a href="https://www.heritage.go.kr/heri/cul/culSelectDetail.do?VdkVgwKey='
@@ -354,7 +425,27 @@
                                             '</div>',
                                     latlng : new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim())
                                 }
-                            );
+                                );
+                            }
+                            //사물주소가 있다면
+                            else{
+                                positions.push(
+                                {
+                                    content: '<div class="overlay_info">' +
+                                            '    <a href="https://www.heritage.go.kr/heri/cul/culSelectDetail.do?VdkVgwKey='
+                                            +    data[i]['HERITAGECODE'].substr(0,2) + ',' + data[i]['HERITAGECODE'].substr(2,8) + ',' + data[i]['HERITAGECODE'].substr(10,2)
+                                            +    '&pageNo__=5_1_1_0&pageNo=1_1_2_0" target="_blank">'
+                                            +    data[i]['ITEMNAME'] + '<strong>'
+                                            +    data[i]['HERITAGENAME'] + '</strong></a>' +
+                                            '    <div class="desc">' +
+                                            '        <img src="' + data[i]['IMAGE'] + '" alt="">' +
+                                            '        <span class="address">' + data[i]['AOT'] +'</span>' +
+                                            '   </div>' +
+                                            '</div>',
+                                    latlng : new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim())
+                                }
+                                );
+                            }
 
                             points.push(new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim()));
                             
@@ -409,7 +500,7 @@
                                 +                                              '<span id="heritageName" style="color: #1679ca; font-size: 1.1em; font-weight:bold;">   ' + data[i]['HERITAGENAME'] + '</span>'
                                 +                                              '<span style="color: black; font-size:0.8em">   ' + data[i]['HERITAGETYPE'] + '</span></div>'
                                 +       '<div><span style="color: darkgray; font-size:0.8em">' + data[i]['ADDRESS']
-                                +                                               '<br>(문화재 주소 넣을 자리)</span></div>'
+                                +                                               '<br>'+ data[i]['AOT'] +'</span></div>'
                                 +   '</div>'
                                 + '</div>'
                                 + '<div style="float:right; width: 100px; overflow:hidden; verical-align:middle; margin:5px 0px 5px 0px;"><img src="' + data[i]['IMAGE'] + '" alt="" style="display:block; width:100px; height:100px; object-fit:cover; margin:0px; border-radius: 7px;"></div></li>'

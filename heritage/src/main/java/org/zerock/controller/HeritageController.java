@@ -19,7 +19,7 @@ import lombok.extern.log4j.Log4j;
 
 @Controller
 @Log4j
-@RequestMapping("/heritage/*")
+@RequestMapping("/heritage*")
 @AllArgsConstructor
 public class HeritageController {
 
@@ -28,7 +28,7 @@ public class HeritageController {
 	@GetMapping("")
 	public String main(Model model) {
 
-		log.info("main ÆäÀÌÁö");
+		log.info("main ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 		model.addAttribute("heritageList", service.getAllList());
 
 	return "/heritage/main";
@@ -53,7 +53,7 @@ public class HeritageController {
 	@GetMapping("/loadOneHeritage")
 	public ResponseEntity<List<HashMap<String, String>>> loadHeitage(@RequestParam("name") String name)
 	{
-		log.info("ÇÏ³ªÀÇ ¹®È­Àç Á¤º¸ ºÒ·¯¿À±â : " + name);
+		log.info("ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ : " + name);
 
 		ResponseEntity<List<HashMap<String, String>>> entity = null;
 	    try{
