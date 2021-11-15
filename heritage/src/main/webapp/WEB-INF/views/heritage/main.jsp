@@ -239,13 +239,13 @@
                     function preventClick(e, order){
                         e.preventDefault()
 
-                        alert(order);
+                        //버튼 활성화
                         activeOrder(order);
                     }
 
                     function activeOrder(order){
 
-                        var menu = ['menuAll', 'menuGB', 'menuBM', ',menuSJ', 'menuMS', 'menuCY'];
+                        var menu = ['menuAll', 'menuGB', 'menuBM', 'menuSJ', 'menuMS', 'menuCY'];
 
                         for(var i=0; i < menu.length; i++)
                         {
@@ -263,6 +263,8 @@
                                 document.getElementById(menu[i]).style.color = "#eaf4ff";
                             }
                         }
+
+                        var condition = document.getElementById(order).innerHTML.split('<')[0];
                     }
 
                     function setBounds(){
@@ -332,6 +334,7 @@
                                 closeAllInfoWindows();
                                 refreshSymbol();
                                 searchHeritage();
+                                //activeOrder('menuAll')
                             }
                         }
                     })(jQuery)
