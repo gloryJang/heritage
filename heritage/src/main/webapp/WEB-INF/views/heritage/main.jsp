@@ -140,12 +140,12 @@
                             </div>
                             <div>
                                 <ul>
-                                    <li><a id="menuAll" href="#" class="orderItem" onclick="preventClick(event, '전체')">전체<br>(0)</a></li>
-                                    <li><a id="menuGB" href="#" class="orderItem" onclick="preventClick(event, '국보')">국보<br>(0)</a></li>
-                                    <li><a id="menuBM" href="#" class="orderItem" onclick="preventClick(event, '보물')">보물<br>(0)</a></li>
-                                    <li><a id="menuSJ" href="#" class="orderItem" onclick="preventClick(event, '사적')">사적<br>(0)</a></li>
-                                    <li><a id="menuMS" href="#" class="orderItem" onclick="preventClick(event, '명승')">명승<br>(0)</a></li>
-                                    <li><a id="menuCY" href="#" class="orderItem" onclick="preventClick(event, '천연기념물')">천연<br>(0)</a></li>
+                                    <li><a id="menuAll" href="#" class="orderItem" onclick="preventClick(event, 'menuAll')">전체<br>(0)</a></li>
+                                    <li><a id="menuGB" href="#" class="orderItem" onclick="preventClick(event, 'menuGB')">국보<br>(0)</a></li>
+                                    <li><a id="menuBM" href="#" class="orderItem" onclick="preventClick(event, 'menuBM')">보물<br>(0)</a></li>
+                                    <li><a id="menuSJ" href="#" class="orderItem" onclick="preventClick(event, 'menuSJ')">사적<br>(0)</a></li>
+                                    <li><a id="menuMS" href="#" class="orderItem" onclick="preventClick(event, 'menuMS')">명승<br>(0)</a></li>
+                                    <li><a id="menuCY" href="#" class="orderItem" onclick="preventClick(event, 'menuCY')">천연<br>(0)</a></li>
                                 </ul> 
                             </div>
                         </div>
@@ -238,12 +238,31 @@
                     //분류 이동 막기
                     function preventClick(e, order){
                         e.preventDefault()
-                        
-                        divideResult(order);
+
+                        alert(order);
+                        activeOrder(order);
                     }
 
-                    function divideResult(order){
-                        alert(order);
+                    function activeOrder(order){
+
+                        var menu = ['menuAll', 'menuGB', 'menuBM', ',menuSJ', 'menuMS', 'menuCY'];
+
+                        for(var i=0; i < menu.length; i++)
+                        {
+                            //ACTIVE
+                            if(order == menu[i])
+                            {
+                                document.getElementById(order).style.backgroundColor = "#1166dd";
+                                document.getElementById(order).style.fontWeight= "bold";
+                                document.getElementById(order).style.color = "white";
+                            }
+                            //INACTIVE
+                            else{
+                                document.getElementById(menu[i]).style.backgroundColor = "#258fff";
+                                document.getElementById(menu[i]).style.fontWeight= "normal";
+                                document.getElementById(menu[i]).style.color = "#eaf4ff";
+                            }
+                        }
                     }
 
                     function setBounds(){
