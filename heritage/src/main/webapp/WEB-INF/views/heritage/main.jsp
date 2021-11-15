@@ -85,22 +85,45 @@
     
                     <div class="top">
     
+                    <!--
                         <hr style="color: #6bc010; height:2px; margin: 20px 30px 0px 30px;">
 
+                    
                         <div id="logo">
                             <h1 id="title"">문화재 상세주소 서비스</h1>
                             <p>Cultural Heritage Detailed Address Service</p>
                         </div>
+                    -->
+                    
+                        <div style="background-color: #64b3f4; padding:30px 0px 30px 0px">
+                            <div id="logo" style="margin: 0px 30px 24px 30px;">
+                                <div  style="float: left;">
+                                    <img src="/resources/images/logo.png" style="width: 50px; height: auto;">
+                                </div>
+                                <div style="float: right;">
+                                    <h1 id="title" style="color: white;">문화재 사물주소 안내 서비스</h1>
+                                    <p style="color: white;">Cultural Heritage AoT Service</p>
+                                </div> 
+                            </div>
 
-                        <div id="search" style="margin: 0px 30px 0px 30px;"">
-                            <div class="input-group rounded">
-                                <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 경복궁)" aria-label="Search"
-                                aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4;"/>
+                            <div id="search" style="margin: 0px 30px 0px 30px;"">
+                                <div class="input-group rounded">
+                                    <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 경복궁)" aria-label="Search"
+                                    aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4; height: 50px; padding:10px;"/>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
+                        <!--
                         <hr style="color: #6bc010; height:2px; margin: 20px 30px 10px 30px;">
-                        <div><span id="resultCount" style="text-align: center; color: black; margin: 0px 30px 0px 30px; font-size: 0.8em;"></span></div>
+                        -->
+
+                    <div id="bottomResult">
+
+                        <div style="margin: 10px 0px 10px 0px;">
+                            <span id="resultCount" style="text-align: center; color: black; margin: 0px 30px 0px 30px; font-size: 0.8em;"></span>
+                        </div>
 
                         <div  style="margin: 10px 30px 30px 30px;">
                             <ul id="heritageList" class="list-group">
@@ -291,9 +314,10 @@
                                 showHeritageList(data);
                                 makemarkers(data);
 
-                                 //결과 카운트 출력
-                                 document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
+                                //결과 카운트 출력
+                                document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
                                 
+                                //검색 결과가 없을 때
                                 if(data.length == 0)
                                 {
                                     return;
@@ -302,8 +326,8 @@
                                 //바운드 조절
                                 setBounds();
                             },
-                            error: function(){
-                                alert("error"); 
+                            error: function(request, status, error){
+                                alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error); 
                             }
                         });
                     }
@@ -343,7 +367,10 @@
 
                             var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
 
-                            positions.push(
+                            //사물주소가 없다면
+                            if(data[i]['AOT'] === undefined)
+                            {
+                                positions.push(
                                 {
                                     content: '<div class="overlay_info">' +
                                             '    <a href="https://www.heritage.go.kr/heri/cul/culSelectDetail.do?VdkVgwKey='
@@ -358,7 +385,27 @@
                                             '</div>',
                                     latlng : new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim())
                                 }
-                            );
+                                );
+                            }
+                            //사물주소가 있다면
+                            else{
+                                positions.push(
+                                {
+                                    content: '<div class="overlay_info">' +
+                                            '    <a href="https://www.heritage.go.kr/heri/cul/culSelectDetail.do?VdkVgwKey='
+                                            +    data[i]['HERITAGECODE'].substr(0,2) + ',' + data[i]['HERITAGECODE'].substr(2,8) + ',' + data[i]['HERITAGECODE'].substr(10,2)
+                                            +    '&pageNo__=5_1_1_0&pageNo=1_1_2_0" target="_blank">'
+                                            +    data[i]['ITEMNAME'] + '<strong>'
+                                            +    data[i]['HERITAGENAME'] + '</strong></a>' +
+                                            '    <div class="desc">' +
+                                            '        <img src="' + data[i]['IMAGE'] + '" alt="">' +
+                                            '        <span class="address">' + data[i]['AOT'] +'</span>' +
+                                            '   </div>' +
+                                            '</div>',
+                                    latlng : new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim())
+                                }
+                                );
+                            }
 
                             points.push(new kakao.maps.LatLng(dataLatlng.split(',')[1].trim(), dataLatlng.split(',')[0].trim()));
                             
@@ -413,7 +460,7 @@
                                 +                                              '<span id="heritageName" style="color: #1679ca; font-size: 1.1em; font-weight:bold;">   ' + data[i]['HERITAGENAME'] + '</span>'
                                 +                                              '<span style="color: black; font-size:0.8em">   ' + data[i]['HERITAGETYPE'] + '</span></div>'
                                 +       '<div><span style="color: darkgray; font-size:0.8em">' + data[i]['ADDRESS']
-                                +                                               '<br>(문화재 주소 넣을 자리)</span></div>'
+                                +                                               '<br>'+ data[i]['AOT'] +'</span></div>'
                                 +   '</div>'
                                 + '</div>'
                                 + '<div style="float:right; width: 100px; overflow:hidden; verical-align:middle; margin:5px 0px 5px 0px;"><img src="' + data[i]['IMAGE'] + '" alt="" style="display:block; width:100px; height:100px; object-fit:cover; margin:0px; border-radius: 7px;"></div></li>'
