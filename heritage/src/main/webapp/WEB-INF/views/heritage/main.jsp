@@ -140,23 +140,20 @@
                             </div>
                             <div>
                                 <ul>
-                                    <li class="orderItem" id="menuAll"><a href="#" onclick="preventClick(event, '전체')">전체<br>(0)</a></li>
-                                    <li class="orderItem" id="menuGB"><a href="#" onclick="preventClick(event, '국보')">국보<br>(0)</a></li>
-                                    <li class="orderItem" id="menuBM"><a href="#" onclick="preventClick(event, '보물')">보물<br>(0)</a></li>
-                                    <li class="orderItem" id="menuSJ"><a href="#" onclick="preventClick(event, '사적')">사적<br>(0)</a></li>
-                                    <li class="orderItem" id="menuMS"><a href="#" onclick="preventClick(event, '명승')">명승<br>(0)</a></li>
-                                    <li class="orderItem" id="menuCH"><a href="#" onclick="preventClick(event, '천연기념물')">천연<br>(0)</a></li>
+                                    <li><a id="menuAll" href="#" class="orderItem" onclick="preventClick(event, '전체')">전체<br>(0)</a></li>
+                                    <li><a id="menuGB" href="#" class="orderItem" onclick="preventClick(event, '국보')">국보<br>(0)</a></li>
+                                    <li><a id="menuBM" href="#" class="orderItem" onclick="preventClick(event, '보물')">보물<br>(0)</a></li>
+                                    <li><a id="menuSJ" href="#" class="orderItem" onclick="preventClick(event, '사적')">사적<br>(0)</a></li>
+                                    <li><a id="menuMS" href="#" class="orderItem" onclick="preventClick(event, '명승')">명승<br>(0)</a></li>
+                                    <li><a id="menuCY" href="#" class="orderItem" onclick="preventClick(event, '천연기념물')">천연<br>(0)</a></li>
                                 </ul> 
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="resultWindow" style="width: 390px; float: left; font-family: 맑은고딕, Malgun Gothic, dotum, gulim, sans-serif; margin: 186px 0px 10px 0px; overflow:auto; position:absolute; top: 0; left:0; right:0; bottom:0;">
-                    <div>
-                        <span id="resultCount" style="text-align: center; color: black; margin: 0px 30px 0px 30px; font-size: 0.8em;"></span>
-                    </div>
+                <div class="resultWindow" style="width: 390px; float: left; font-family: 맑은고딕, Malgun Gothic, dotum, gulim, sans-serif; margin: 206px 0px 0px 0px; overflow:auto; position:absolute; top: 0; left:0; right:0; bottom:0;">
 
-                    <div  style="margin: 10px 30px 30px 30px; overflow: hidden;">
+                    <div  style="margin: 10px 20px 30px 20px; overflow: hidden;">
                         <ul id="heritageList" class="list-group">
                         </ul>
                     </div>
@@ -355,7 +352,13 @@
                                 makemarkers(data);
 
                                 //결과 카운트 출력
-                                //document.getElementById("resultCount").innerHTML = '국보 : ' + gb + '점 / 보물 : ' + bm + '점 / 사적 : ' + sj + '곳 / 명승 : ' + ms + '곳 / 천연기념물 : ' + cy + '곳';
+                                var allCount = gb + bm + sj +ms + cy;
+                                document.getElementById("menuGB").innerHTML="국보<br>(" + gb + ")";
+                                document.getElementById("menuBM").innerHTML="보물<br>(" + bm + ")";
+                                document.getElementById("menuSJ").innerHTML="사적<br>(" + sj + ")";
+                                document.getElementById("menuMS").innerHTML="명승<br>(" + ms + ")";
+                                document.getElementById("menuCY").innerHTML="천연<br>(" + cy + ")";
+                                document.getElementById("menuAll").innerHTML="전체<br>(" + allCount + ")";
                                 
                                 //검색 결과가 없을 때
                                 if(data.length == 0)
