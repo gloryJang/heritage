@@ -35,6 +35,7 @@
                 html, body{
                     height: 100%;
                     width: 100%;
+                    font-family : AppleSDGothicNeo-Regular,'Malgun Gothic','맑은 고딕',dotum,'돋움',sans-serif;
                 }
             
                  ::-webkit-scrollbar {
@@ -112,9 +113,10 @@
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
             <!-- Header -->
-                <div id="header" style="width: 390px; float: left; font-family: 맑은고딕, Malgun Gothic, dotum, gulim, sans-serif;">
+                <div id="header" style="width: 390px; float: left;">
                     <div class="top" style="height: 166px; overflow: hidden;">
                         <div style="background-color: #258fff; padding:20px 0px 0px 0px; position: fixed; top:0; width: 390px;">
+                        <!--
                             <div id="logo" style="margin: 0px 20px 10px 20px;">
                                 <div  style="width:25px; float: left; padding-top: 2px;">
                                     <img src="/resources/images/logo.png" style="width: 25px; height: auto;">
@@ -124,8 +126,15 @@
                                     <p style="color: white; font-size: 0.7em;">Cultural Heritage AoT Service</p>
                                 </div> 
                             </div>
+                        -->
 
-                            <div id="search" style="margin: 0px 20px 5px 20px;"">
+                        <div>
+                            <h1 id="title" style="color: white; font-size: 1.3em; font-weight: 400;">문화재 사물주소 안내 서비스</h1>
+                            <p style="color: white; font-size: 0.8em; margin-top: -5px; font-family: Roboto;">Cultural Heritage AoT Service</p>
+                        </div> 
+
+
+                            <div id="search" style="margin: -10px 20px 10px 20px;"">
                                 <div class="input-group rounded">
                                     <input type="search" id="searchWord" class="form-control rounded" placeholder="문화재를 입력하세요. (예시 : 경복궁)" aria-label="Search"
                                     aria-describedby="search-addon" onkeyup="enterSearch()" style="border: 3px solid #2d80c4; height: 50px; padding:10px;"/>
@@ -144,9 +153,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="resultWindow" style="width: 390px; float: left; font-family: 맑은고딕, Malgun Gothic, dotum, gulim, sans-serif; margin: 206px 0px 0px 0px; overflow:auto; position:absolute; top: 0; left:0; right:0; bottom:0;">
+                <div class="resultWindow" style="width: 390px; float: left; margin: 206px 0px 0px 0px; overflow:auto; position:absolute; top: 0; left:0; right:0; bottom:0;">
 
-                    <div  style="margin: 10px 20px 30px 20px; overflow: hidden;">
+                    <div  style="margin: 20px 20px 30px 20px; overflow: hidden;">
                         <ul id="heritageList" class="list-group">
                         </ul>
                     </div>
@@ -363,6 +372,14 @@
                     //검색 결과 목록 띄우기
                     function searchHeritage(condition)
                     {
+                        if(input == '')
+                        {
+                            Swal.fire('검색어를 입력하세요.');
+                            $("#searchWord").focus();
+
+                            return;
+                        }
+
                         //검색결과창 초기화
                         $('#heritageList').children().remove();
                         closeAllInfoWindows();
@@ -446,7 +463,7 @@
                         for (var i=0; i<data.length; i++)
                         {
                             heritageList.append('<li id="heritageItem" class="list-group-item list-group-item-action" style="text-align:left; padding:10px; min-height:130px;">'
-                                + '<div style="float:left; postion:relative; width: calc(100% - 108px);">'
+                                + '<div style="float:left; postion:relative; width: calc(100% - 85px);">'
                                 +   '<div style="padding:5px">'
                                 +       '<div><span style="color: #03820d; font-size:0.8em; font-weight:bold;">' + data[i]['ITEMNAME'] +'</span>'
                                 +                                              '<span id="heritageName" style="color: #1679ca; font-size: 1.1em; font-weight:bold;">   ' + data[i]['HERITAGENAME'] + '</span>'
@@ -455,7 +472,7 @@
                                 +                                               '<br>'+ data[i]['AOT'] +'</span></div>'
                                 +   '</div>'
                                 + '</div>'
-                                + '<div style="float:right; width: 100px; overflow:hidden; verical-align:middle; margin:5px 0px 5px 0px;"><img src="' + data[i]['IMAGE'] + '" alt="" style="display:block; width:100px; height:100px; object-fit:cover; margin:0px; border-radius: 7px;"></div></li>'
+                                + '<div style="float:right; width: 80px; overflow:hidden; verical-align:middle; margin:5px 0px 5px 0px;"><img src="' + data[i]['IMAGE'] + '" alt="" style="display:block; width:80px; height:80px; object-fit:cover; margin:0px; border-radius: 7px;"></div></li>'
                             );                    
                         }                      
                     }
