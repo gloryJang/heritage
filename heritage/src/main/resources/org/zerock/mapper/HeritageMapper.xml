@@ -8,6 +8,7 @@
   		select heritagecode, itemname, heritagetype, heritagename, address, center, image, aot 
   		from heritage
   		where replace(heritageName, ' ', '') like '%'||replace(#{name}, ' ', '')||'%'
+  		      and itemname like '%'||#{condition}||'%'
   		order by length(heritagename)
   	</select>
   

@@ -24,14 +24,15 @@ public class HeritageServiceImpl implements HeritageService {
 	private HeritageMapper mapper;
 
 	@Override
-	public List<HashMap<String, String>> loadList(String name) {
+	public List<HashMap<String, String>> loadList(String name, String condition) {
 
-		log.info("��ȭ�� �� ���� �������� : " + name);
+		log.info("파라미터 매퍼 전 : " + name + ", " + condition);
 
-		Map<String, Object> paramMap = new HashMap<>();
+		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("name", name);
+		paramMap.put("condition", condition);
 
-		return mapper.loadList(name);
+		return mapper.loadList(paramMap);
 	}
 
 	@Override

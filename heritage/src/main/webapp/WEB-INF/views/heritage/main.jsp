@@ -36,13 +36,6 @@
                     height: 100%;
                     width: 100%;
                 }
-
-                /*
-                ::-webkit-scrollbar { 
-                display: none;
-                width: 0 !important;
-            }
-            */
             
                  ::-webkit-scrollbar {
                 width: 10px;
@@ -231,6 +224,8 @@
                         $('#heritageList').on('click', '.list-group-item', function(e) {
                             var selectedItem = $(this).text().split('   ')[1];
   
+                            //모든 인포윈도우창 닫기
+                            closeAllInfoWindows();
                             heritageOnMap(selectedItem);
                         });
                     });
@@ -241,30 +236,6 @@
 
                         //버튼 활성화
                         activeOrder(order);
-                    }
-
-                    function activeOrder(order){
-
-                        var menu = ['menuAll', 'menuGB', 'menuBM', 'menuSJ', 'menuMS', 'menuCY'];
-
-                        for(var i=0; i < menu.length; i++)
-                        {
-                            //ACTIVE
-                            if(order == menu[i])
-                            {
-                                document.getElementById(order).style.backgroundColor = "#1166dd";
-                                document.getElementById(order).style.fontWeight= "bold";
-                                document.getElementById(order).style.color = "white";
-                            }
-                            //INACTIVE
-                            else{
-                                document.getElementById(menu[i]).style.backgroundColor = "#258fff";
-                                document.getElementById(menu[i]).style.fontWeight= "normal";
-                                document.getElementById(menu[i]).style.color = "#eaf4ff";
-                            }
-                        }
-
-                        var condition = document.getElementById(order).innerHTML.split('<')[0];
                     }
 
                     function setBounds(){
@@ -316,6 +287,9 @@
                         bounds = new kakao.maps.LatLngBounds();
                     }
 
+                    //사용자 입력 변수
+                    var input = "";
+
                     //폴리곤 배열
                     var polygons = [];
                     //마커 배열
@@ -328,16 +302,56 @@
                     (function($){
                         enterSearch = () => {
                             if(window.event.keyCode == 13){
+
                                 //자동완성 창 닫기
                                 document.getElementById('searchWord').blur();
 
-                                closeAllInfoWindows();
-                                refreshSymbol();
-                                searchHeritage();
-                                //activeOrder('menuAll')
+                                //검색어를 입력하지 않았을 때
+                                if($('#searchWord').val().trim() == 0)
+                                {
+                                    Swal.fire('검색어를 입력하세요.');
+                                    return;
+                                }
+
+                                input = $('#searchWord').val().trim()
+
+                                activeOrder('menuAll')
                             }
                         }
                     })(jQuery)
+
+                    function activeOrder(order){
+                        var menu = ['menuAll', 'menuGB', 'menuBM', 'menuSJ', 'menuMS', 'menuCY'];
+
+                        for(var i=0; i < menu.length; i++)
+                        {
+                            //ACTIVE
+                            if(order == menu[i])
+                            {
+                                document.getElementById(order).style.backgroundColor = "#1166dd";
+                                document.getElementById(order).style.fontWeight= "bold";
+                                document.getElementById(order).style.color = "white";
+                            }
+                            //INACTIVE
+                            else{
+                                document.getElementById(menu[i]).style.backgroundColor = "#258fff";
+                                document.getElementById(menu[i]).style.fontWeight= "normal";
+                                document.getElementById(menu[i]).style.color = "#eaf4ff";
+                            }
+                        }
+
+                        var condition = document.getElementById(order).innerHTML.split('<')[0];
+
+                        //조건이 없을 경우
+                        if(condition == '전체')
+                        {
+                            searchHeritage('');
+                        }
+                        //조건이 있을 경우
+                        else{
+                            searchHeritage(condition);
+                        }
+                    }
 
                     //카운트를 위한 변수
                     var gb = 0;
@@ -346,22 +360,19 @@
                     var ms = 0;
                     var cy = 0;
 
-                    function searchHeritage()
+                    //검색 결과 목록 띄우기
+                    function searchHeritage(condition)
                     {
-                        //검색어를 입력하지 않았을 때
-                        if($('#searchWord').val().trim() == 0)
-                        {
-                            Swal.fire('검색어를 입력하세요.');
-                            return
-                        }
-
+                        //검색결과창 초기화
                         $('#heritageList').children().remove();
+                        closeAllInfoWindows();
 
                         //검색결과 가져오기
                         $.ajax({
                             url: "loadList",
                             type: "GET",
-                            data: {name: $('#searchWord').val().trim()},
+                            data: {name: input,
+                                   condition :  condition},
                             dataType:"JSON",
                             success: function(data){
                                 //인풋창으로 포커스 이동
@@ -370,18 +381,16 @@
                                 //포인트 초기화
                                 points = []
 
+                                refreshSymbol();
                                 showHeritageList(data);
                                 makemarkers(data);
 
-                                //결과 카운트 출력
-                                var allCount = gb + bm + sj +ms + cy;
-                                document.getElementById("menuGB").innerHTML="국보<br>(" + gb + ")";
-                                document.getElementById("menuBM").innerHTML="보물<br>(" + bm + ")";
-                                document.getElementById("menuSJ").innerHTML="사적<br>(" + sj + ")";
-                                document.getElementById("menuMS").innerHTML="명승<br>(" + ms + ")";
-                                document.getElementById("menuCY").innerHTML="천연<br>(" + cy + ")";
-                                document.getElementById("menuAll").innerHTML="전체<br>(" + allCount + ")";
-                                
+                                //검색결과 카운트
+                                if(condition == '')
+                                {
+                                    countResult(data);
+                                }
+
                                 //검색 결과가 없을 때
                                 if(data.length == 0)
                                 {
@@ -396,27 +405,15 @@
                             }
                         });
                     }
-                    
-                    //마커 만들기
-                    function makemarkers(data)
-                    {
-                        var positions = [];
 
-                        // 마커 이미지의 이미지 주소입니다
-                        var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
-                        // 마커 이미지의 이미지 크기 입니다
-                        var imageSize = new kakao.maps.Size(24, 35); 
-                        // 마커 이미지를 생성합니다    
-                        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
-
+                    function countResult(data){
                         //카운트 초기화
                         gb = 0;
                         bm = 0;
                         sj = 0;
                         ms = 0;
-                        cy = 0;                        
+                        cy = 0;  
 
-                        //검색 결과 수만큼 만들기
                         for(var i=0; i<data.length; i++)
                         {
                             if (data[i]['ITEMNAME'] == "국보")
@@ -429,7 +426,55 @@
                             {ms++}
                             else if(data[i]['ITEMNAME'] == "천연기념물")
                             {cy++}
+                        }
 
+                        //결과 카운트 출력
+                        var allCount = gb + bm + sj +ms + cy;
+                        document.getElementById("menuGB").innerHTML="국보<br>(" + gb + ")";
+                        document.getElementById("menuBM").innerHTML="보물<br>(" + bm + ")";
+                        document.getElementById("menuSJ").innerHTML="사적<br>(" + sj + ")";
+                        document.getElementById("menuMS").innerHTML="명승<br>(" + ms + ")";
+                        document.getElementById("menuCY").innerHTML="천연<br>(" + cy + ")";
+                        document.getElementById("menuAll").innerHTML="전체<br>(" + allCount + ")";
+                    }
+
+                    //검색 결과 리스트 보여주기
+                    function showHeritageList(data)
+                    {
+                        var heritageList = $('#heritageList');
+
+                        for (var i=0; i<data.length; i++)
+                        {
+                            heritageList.append('<li id="heritageItem" class="list-group-item list-group-item-action" style="text-align:left; padding:10px; min-height:130px;">'
+                                + '<div style="float:left; postion:relative; width: calc(100% - 108px);">'
+                                +   '<div style="padding:5px">'
+                                +       '<div><span style="color: #03820d; font-size:0.8em; font-weight:bold;">' + data[i]['ITEMNAME'] +'</span>'
+                                +                                              '<span id="heritageName" style="color: #1679ca; font-size: 1.1em; font-weight:bold;">   ' + data[i]['HERITAGENAME'] + '</span>'
+                                +                                              '<span style="color: black; font-size:0.8em">   ' + data[i]['HERITAGETYPE'] + '</span></div>'
+                                +       '<div><span style="color: darkgray; font-size:0.8em">' + data[i]['ADDRESS']
+                                +                                               '<br>'+ data[i]['AOT'] +'</span></div>'
+                                +   '</div>'
+                                + '</div>'
+                                + '<div style="float:right; width: 100px; overflow:hidden; verical-align:middle; margin:5px 0px 5px 0px;"><img src="' + data[i]['IMAGE'] + '" alt="" style="display:block; width:100px; height:100px; object-fit:cover; margin:0px; border-radius: 7px;"></div></li>'
+                            );                    
+                        }                      
+                    }
+                    
+                    //마커 만들기
+                    function makemarkers(data)
+                    {
+                        var positions = [];
+
+                        // 마커 이미지의 이미지 주소입니다
+                        var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
+                        // 마커 이미지의 이미지 크기 입니다
+                        var imageSize = new kakao.maps.Size(24, 35); 
+                        // 마커 이미지를 생성합니다    
+                        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);                   
+
+                        //검색 결과 수만큼 만들기
+                        for(var i=0; i<data.length; i++)
+                        {
                             var dataLatlng = data[i]['CENTER'].split('[')[1].split(']')[0].trim();
 
                             //사물주소가 없다면
@@ -510,28 +555,6 @@
                             infoWindows[i].close();
                         }
                     }
-                    
-                    //검색 결과 리스트 보여주기
-                    function showHeritageList(data)
-                    {
-                        var heritageList = $('#heritageList');
-
-                        for (var i=0; i<data.length; i++)
-                        {
-                            heritageList.append('<li id="heritageItem" class="list-group-item list-group-item-action" style="text-align:left; padding:10px; min-height:130px;">'
-                                + '<div style="float:left; postion:relative; width: calc(100% - 108px);">'
-                                +   '<div style="padding:5px">'
-                                +       '<div><span style="color: #03820d; font-size:0.8em; font-weight:bold;">' + data[i]['ITEMNAME'] +'</span>'
-                                +                                              '<span id="heritageName" style="color: #1679ca; font-size: 1.1em; font-weight:bold;">   ' + data[i]['HERITAGENAME'] + '</span>'
-                                +                                              '<span style="color: black; font-size:0.8em">   ' + data[i]['HERITAGETYPE'] + '</span></div>'
-                                +       '<div><span style="color: darkgray; font-size:0.8em">' + data[i]['ADDRESS']
-                                +                                               '<br>'+ data[i]['AOT'] +'</span></div>'
-                                +   '</div>'
-                                + '</div>'
-                                + '<div style="float:right; width: 100px; overflow:hidden; verical-align:middle; margin:5px 0px 5px 0px;"><img src="' + data[i]['IMAGE'] + '" alt="" style="display:block; width:100px; height:100px; object-fit:cover; margin:0px; border-radius: 7px;"></div></li>'
-                            );                    
-                        }                      
-                    }
 
                     function heritageOnMap(selectedItem)
                     {
@@ -542,7 +565,6 @@
                             data: {name: selectedItem},
                             dataType:"JSON",
                             success: function(data){
-                                closeAllInfoWindows();
                                 focusTo(data);
                             },
                             error: function(){

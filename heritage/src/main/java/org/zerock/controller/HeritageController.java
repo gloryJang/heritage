@@ -35,13 +35,13 @@ public class HeritageController {
 	}
 
 	@GetMapping("/loadList")
-	public ResponseEntity<List<HashMap<String, String>>> loadList(@RequestParam("name") String name)
+	public ResponseEntity<List<HashMap<String, String>>> loadList(@RequestParam("name") String name, @RequestParam("condition") String condition)
 	{
-		log.info("��ȭ�� �̸� �Է� : " + name);
+		log.info("파라미터 받음 : " + name + ", " + condition);
 
 		ResponseEntity<List<HashMap<String, String>>> entity = null;
 	    try{
-	        entity = new ResponseEntity<>(service.loadList(name), HttpStatus.OK);
+	        entity = new ResponseEntity<>(service.loadList(name, condition), HttpStatus.OK);
 	    } catch(Exception e){
 	        e.printStackTrace();
 	        entity = new ResponseEntity<>( HttpStatus.BAD_REQUEST );

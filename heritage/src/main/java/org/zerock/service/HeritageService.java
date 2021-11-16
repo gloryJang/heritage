@@ -8,7 +8,7 @@ import org.zerock.domain.HeritageVO;
 
 public interface HeritageService {
 
-	public List<HashMap<String, String>> loadList(String name);
+	public List<HashMap<String, String>> loadList(String name, String condition);
 
 	public List<HashMap<String, String>> loadOneHeritage(String name);
 
