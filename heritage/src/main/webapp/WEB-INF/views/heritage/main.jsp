@@ -129,8 +129,10 @@
                         -->
 
                         <div>
+                            <a href="" onClick="top.location='javascript:location.reload()'">
                             <h1 id="title" style="color: white; font-size: 1.3em; font-weight: 400;">문화재 사물주소 안내 서비스</h1>
                             <p style="color: white; font-size: 0.8em; margin-top: -5px; font-family: Roboto;">Cultural Heritage AoT Service</p>
+                            </a>
                         </div> 
 
 
@@ -462,7 +464,7 @@
 
                         for (var i=0; i<data.length; i++)
                         {
-                            heritageList.append('<li id="heritageItem" class="list-group-item list-group-item-action" style="text-align:left; padding:10px; min-height:130px;">'
+                            heritageList.append('<li id="heritageItem" class="list-group-item list-group-item-action" style="text-align:left; padding:10px; min-height:110px;">'
                                 + '<div style="float:left; postion:relative; width: calc(100% - 85px);">'
                                 +   '<div style="padding:5px">'
                                 +       '<div><span style="color: #03820d; font-size:0.8em; font-weight:bold;">' + data[i]['ITEMNAME'] +'</span>'
