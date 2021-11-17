@@ -69,7 +69,10 @@
                     li {
                     float: left;
                     font-size: 0.8em;
-                    width: 64px;
+                    }
+
+                    li [class = 'orderItem'] {
+                    width: 58px;
                     }
 
                     li a {
