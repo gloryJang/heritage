@@ -69,6 +69,7 @@
                     li {
                     float: left;
                     font-size: 0.8em;
+                    width: 64px;
                     }
 
                     li a {
